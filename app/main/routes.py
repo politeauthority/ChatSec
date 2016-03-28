@@ -1,4 +1,4 @@
-from flask import session, redirect, url_for, render_template, request
+from flask import session, redirect, url_for, render_template, request, send_from_directory
 from . import main
 from .forms import LoginForm
 
@@ -21,8 +21,20 @@ def index():
 def chat():
     """Chat room. The user's name and room must be stored in
     the session."""
-    name = session.get('name', '')
-    room = session.get('room', '')
-    if name == '' or room == '':
+    data = {
+        'name': session.get('name', ''),
+        'room': session.get('room', ''),
+    }
+    if data['name'] == '' or data['room'] == '':
         return redirect(url_for('.index'))
-    return render_template('chat.html', name=name, room=room)
+    return render_template('chat.html', **data)
+
+
+@main.route('/js/<path:path>')
+def send_js(path):
+    print path
+    print ''
+    print ''
+    return send_from_directory('js/', path)
+
+# End File: app/main/routes.py

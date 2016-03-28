@@ -16,4 +16,9 @@
     margin: 0;
     display: inline;
     padding-right: 8px;
-}   
+}
+
+.chat_image{
+    max-width: 500px;
+}
+

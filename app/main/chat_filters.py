@@ -14,7 +14,7 @@ def anchor_urls(msg):
     for u in urls:
         msg = msg.replace(u, '<a target="_new" href="%(urls)s">%(urls)s</a>' % {'urls': u})
         if u[-4:] in ['.jpg', '.gif', '.png'] or u[-5:] == '.jpeg':
-            imgs += """<img src="%s" class="image-responsive">""" % u
+            imgs += """<img class="chat_image" src="%s" class="image-responsive">""" % u
     if imgs != '':
         msg += '<br/>' + imgs
     return msg

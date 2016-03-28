@@ -21,7 +21,7 @@ def joined(message):
         'user': session.get('name'),
         'msg': 'Joined the room.'
     }
-    data['tpl'] = render_template('msg.html', **data)    
+    data['tpl'] = render_template('msg.html', **data)
     emit('status', {'msg': session.get('name') + ' has entered the room.'}, room=room)
 
 

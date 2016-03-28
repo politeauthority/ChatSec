@@ -28,7 +28,7 @@ $(document).ready(function(){
                 socket.emit('text', {msg: text});
             }
         } else {
-            socket.emit('text', {'msg': 'typing'});            
+            // socket.emit('typing', {'msg': 'typing'});            
             console.log('typing');
         }
     });

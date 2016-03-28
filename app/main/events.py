@@ -26,7 +26,7 @@ def joined(message):
 
 
 @socketio.on('text', namespace='/chat')
-def left(message):
+def msg(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
     room = session.get('room')
@@ -38,6 +38,11 @@ def left(message):
     }
     data['tpl'] = render_template('msg.html', **data)
     emit('message', data, room=room)
+
+
+@socketio.on('typing', namespace='/chat')
+def typing(message):
+    emit('status', {'msg': 'typing'}, room=room)
 
 
 @socketio.on('left', namespace='/chat')

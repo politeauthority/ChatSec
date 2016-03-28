@@ -1,6 +1,7 @@
 from flask import session, redirect, url_for, render_template, request, send_from_directory
 from . import main
 from .forms import LoginForm
+import random
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -21,8 +22,10 @@ def index():
 def chat():
     """Chat room. The user's name and room must be stored in
     the session."""
+    session['avatar'] = get_avatar()
     data = {
         'name': session.get('name', ''),
+        'avatar': session['avatar'],
         'room': session.get('room', ''),
     }
     if data['name'] == '' or data['room'] == '':
@@ -30,11 +33,16 @@ def chat():
     return render_template('chat.html', **data)
 
 
-@main.route('/js/<path:path>')
-def send_js(path):
-    print path
-    print ''
-    print ''
-    return send_from_directory('js/', path)
+def get_avatar():
+    imgs = [
+        'Baby_48.png',
+        'EditorTeacher_48.png',
+        'Merchant_48.png',
+        'Nurse_48.png',
+        'Professor_OldMan_48.png',
+        'SPY_48.png',
+        'Thief_48.png'
+    ]
+    return imgs[random.randrange(0, len(imgs) - 1)]
 
 # End File: app/main/routes.py

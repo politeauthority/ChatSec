@@ -12,6 +12,8 @@ $(document).ready(function(){
         console.log(data.msg);
         $('#chat').append( data.tpl);
         $('#chat').scrollTop($('#chat')[0].scrollHeight);
+        var audio = new Audio('/static/audio/new_msg.mp3');
+        audio.play();
     });
     $('#text').keypress(function(e) {
         var code = e.keyCode || e.which;

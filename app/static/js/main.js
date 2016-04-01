@@ -1,4 +1,14 @@
+/*
+var password = 'L0ck it up saf3';
+var plaintext = 'pssst ... đon’t tell anyøne!';
+var ciphertext = Aes.Ctr.encrypt(plaintext, password, 256);
+var origtext = Aes.Ctr.decrypt(ciphertext, password, 256);
+*/
+
+var password = 'L0ck it up saf3';
+
 var socket;
+
 $(document).ready(function(){
     socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
     socket.on('connect', function() {
@@ -10,10 +20,12 @@ $(document).ready(function(){
         $('#chat').scrollTop($('#chat')[0].scrollHeight);
     });
     socket.on('message', function(data) {
-        $('#chat').append( data.tpl);
+        unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
+        $('#chat').append(data.tpl);
+        $('#chat li:last-child .msg_content').text(unencrypted_msg);
         $('#chat').scrollTop($('#chat')[0].scrollHeight);
         var audio = new Audio('/static/audio/new_msg.mp3');
-        audio.play();
+        // audio.play();
     });
     socket.on('typing', function(data) {
         console.log('some ones fucking typing');
@@ -22,22 +34,14 @@ $(document).ready(function(){
     $('#text').keypress(function(e) {
         var code = e.keyCode || e.which;
         if (code == 13) {
-            text = $('#text').val();
-            if(text != ''){            
-                $('#text').val('');
-                socket.emit('text', {msg: text});
-            }
+            send_msg($('#text').val());
         } else {
             // socket.emit('typing', {'msg': 'typing'});            
-            console.log('typing');
+            // console.log('typing');
         }
     });
     $('#send').click(function(e) {
-        text = $('#text').val();
-        if(text != ''){
-            $('#text').val('');
-            socket.emit('text', {msg: text});
-        }
+        send_msg($('#text'));
     });
 
     // Timer Scripts
@@ -57,10 +61,19 @@ $(document).ready(function(){
 
 
 });
-function leave_room() {
+function leave_room(){
     socket.emit('left', {}, function() {
         socket.disconnect();
         // go back to the login page
         window.location.href = "/";
     });
+}
+
+function send_msg(msg){
+    if(msg != ''){
+        $('#text').val('');
+        msg = Aes.Ctr.encrypt(msg, password, 256)
+        console.log(msg);
+        socket.emit('text', {msg: msg});
+    }    
 }

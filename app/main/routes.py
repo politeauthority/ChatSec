@@ -22,10 +22,11 @@ def index():
 def chat():
     """Chat room. The user's name and room must be stored in
     the session."""
-    session['avatar'] = get_avatar()
+    if 'avatar' not in session:
+        session['avatar'] = get_avatar()
     data = {
         'name': session.get('name', ''),
-        'avatar': session['avatar'],
+        'avatar': session.get('avatar'),
         'room': session.get('room', ''),
     }
     if data['name'] == '' or data['room'] == '':

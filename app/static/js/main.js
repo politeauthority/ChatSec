@@ -10,15 +10,19 @@ var password = 'L0ck it up saf3';
 var socket;
 
 $(document).ready(function(){
+    $("#text").focus();
     socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+    
     socket.on('connect', function() {
         socket.emit('joined', {});
     });
+    
     socket.on('status', function(data) {
         console.log(data);
         $('#chat').append(data.tpl);
         $('#chat').scrollTop($('#chat')[0].scrollHeight);
     });
+
     socket.on('message', function(data) {
         unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
         $('#chat').append(data.tpl);
@@ -41,15 +45,28 @@ $(document).ready(function(){
         }
     });
     $('#send').click(function(e) {
-        send_msg($('#text'));
+        send_msg($('#text').val());
     });
 
     // Timer Scripts
     window.setInterval(function(){
         // Update msg time
         $("#chat li").each(function( index ) {
-            msg_time = $(this).attr('data-date');
-            // console.log($(this).attr('data-date') );
+            var now = new Date();
+            var msg_time = new Date( $(this).attr('data-date') );
+            diff = Math.round(Math.abs( now - msg_time) / 1000);
+            if(diff < 60){
+                msg_pretty_time = 'seconds ago';
+            } else if(diff < 3600 ){
+                minutes = Math.round(diff / 60);
+                if(minutes == 1){
+                    msg_pretty_time = '1 minutes ago';
+                } else {
+                    msg_pretty_time = minutes + ' mintues ago';
+                }
+            }
+            $(this).find('.msg_date').text(msg_pretty_time);
+
             // console.log( index + ": " + $( this ).text() );
         });
 
@@ -57,7 +74,7 @@ $(document).ready(function(){
         $('pre code').each(function(i, block) {
             hljs.highlightBlock(block);
         });
-    }, 5000);
+    }, 10000);
 
 
 });

@@ -73,18 +73,18 @@ var CHATSEC = CHATSEC || (function(){
             console.log( 'starting' );
             Cookies.set('name', _args[0]);
             Cookies.set('password', _args[1]);
-            Cookies.set('avatar', _args[2]);            
-            // some other initialising
+            Cookies.set('avatar', _args[2]);
+
+            Notification.requestPermission().then(function(result) {
+              console.log(result);
+            });
+
         },
         launch : function(){
 
             $(document).ready(function(){
                 $('.typing').hide();
                 $("#text").focus();
-
-                Notification.requestPermission().then(function(result) {
-                  console.log(result);
-                });
 
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
                 
@@ -93,7 +93,7 @@ var CHATSEC = CHATSEC || (function(){
                 });
                 
                 socket.on('status', function(data) {
-                    $('#chat').append(data.tpl);
+                    $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
@@ -130,8 +130,16 @@ var CHATSEC = CHATSEC || (function(){
                     }
                 });
 
-                $('#send').click(function(e) {
+                $('#send').click(function(e){
                     send_msg($('#text').val());
+                });
+
+                $('#clear_msgs').click(function(e){
+                    $('#chat li').each(function(){
+                        if(!$(this).hasClass('typing')){
+                            $(this).remove();
+                        }
+                    });
                 });
 
                 // Timer Scripts
@@ -142,10 +150,10 @@ var CHATSEC = CHATSEC || (function(){
                         var msg_time = new Date( $(this).attr('data-date') );
                         diff = Math.round(Math.abs( now - msg_time) / 1000);
                         msg_pretty_time = false;
-                        if(diff < 30){
+                        if(diff < 20){
                             msg_pretty_time = 'seconds ago';
-                        }else if(diff < 50){
-                            msg_pretty_time = 'about a minute ago'
+                        }else if(diff < 3600 ){
+                            msg_pretty_time = 'less then a minute ago'
                         } else if(diff < 3600 ){
                             minutes = Math.round(diff / 60);
                             if(minutes == 1){

@@ -7,4 +7,5 @@ class LoginForm(Form):
     """Accepts a nickname and a room."""
     name = StringField('Name', validators=[Required()])
     room = StringField('Room', validators=[Required()])
+    password = StringField('Password', validators=[Required()])
     submit = SubmitField('Enter Chatroom')

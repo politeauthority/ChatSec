@@ -55,6 +55,7 @@ var CHATSEC = CHATSEC || (function(){
             console.log( 'starting' );
             Cookies.set('name', _args[0]);
             Cookies.set('password', _args[1]);
+            Cookies.set('avatar', _args[2]);            
             // some other initialising
         },
         helloWorld : function() {
@@ -79,6 +80,7 @@ var CHATSEC = CHATSEC || (function(){
                 socket.on('message', function(data) {
                     if (data.msg == 'chatsec-user-typing'){
                         if(Cookies.get('name') != data.user ){
+                            // $('.typing').find('img').attr('src', Cookies.get('avatar'))
                             $('.typing').show().delay(750).fadeOut();
                         }
                     } else {
@@ -115,10 +117,10 @@ var CHATSEC = CHATSEC || (function(){
                         var msg_time = new Date( $(this).attr('data-date') );
                         diff = Math.round(Math.abs( now - msg_time) / 1000);
                         msg_pretty_time = false;
-                        if(diff < 40){
+                        if(diff < 30){
                             msg_pretty_time = 'seconds ago';
-                            console.log(diff);
-                        else if(diff <)
+                        }else if(diff < 50){
+                            msg_pretty_time = 'about a minute ago'
                         } else if(diff < 3600 ){
                             minutes = Math.round(diff / 60);
                             if(minutes == 1){
@@ -126,6 +128,8 @@ var CHATSEC = CHATSEC || (function(){
                             } else {
                                 msg_pretty_time = minutes + ' mintues ago';
                             }
+                        } else {
+                            msg_pretty_time = false;
                         }
                         if(msg_pretty_time){
                             $(this).find('.msg_date').text(msg_pretty_time);

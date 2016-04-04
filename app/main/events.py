@@ -19,10 +19,11 @@ def joined(message):
     }
     data = {
         'user': session.get('name'),
-        'msg': 'Joined the room.'
+        'avatar': session.get('avatar'),
+        'msg': '@%s joined the room.' % session.get('name')
     }
     data['tpl'] = render_template('msg.html', **data)
-    emit('status', {'msg': session.get('name') + ' has entered the room.'}, room=room)
+    emit('status', data, room=room)
 
 
 @socketio.on('text', namespace='/chat')

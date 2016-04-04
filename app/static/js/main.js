@@ -27,8 +27,9 @@ function send_msg(msg){
 }
 
 function filter_msg(msg){
+    msg = msg.trim();
     msg = filter_code(msg);
-    console.log(msg);
+    msg = filter_href(msg);
     return msg;
 }
 
@@ -39,12 +40,29 @@ function filter_code(msg){
     return msg;
 }
 
-function filter_code(msg){
-    if(msg.substring(0,5)=='/code'){
-        msg = '<pre>' + msg.substring(5) + '</pre>';
+function filter_href(msg){
+    geturl = new RegExp(
+        "(^|[ \t\r\n])((ftp|http|https|gopher|mailto|news|nntp|telnet|wais|file|prospero|aim|webcal):(([A-Za-z0-9$_.+!*(),;/?:@&~=-])|%[A-Fa-f0-9]{2}){2,}(#([a-zA-Z0-9][a-zA-Z0-9$_.+!*(),;/?:@&~=%-]*))?([A-Za-z0-9$_+!*();/?:~-]))",
+        "g");
+    if(msg.match(geturl) && msg.match(geturl).length){
+        msg.match(geturl).forEach(function(_url){
+            msg = msg.replace(_url, '<a href="'+_url+'" target="_new">'+_url+'</a>')
+        });
     }
     return msg;
 }
+
+function spawnNotification(theBody,theIcon,theTitle) {
+    if( ! window.onfocus ){
+        var options = {
+          body: theBody,
+          icon: theIcon
+        }
+        var n = new Notification(theTitle,options);
+        setTimeout(n.close.bind(n), 5000);         
+    }
+}
+
 
 var CHATSEC = CHATSEC || (function(){
     var _args = {}; // private
@@ -58,14 +76,16 @@ var CHATSEC = CHATSEC || (function(){
             Cookies.set('avatar', _args[2]);            
             // some other initialising
         },
-        helloWorld : function() {
-            alert('Hello World! -' + _args[0]);
-        },
         launch : function(){
 
             $(document).ready(function(){
                 $('.typing').hide();
                 $("#text").focus();
+
+                Notification.requestPermission().then(function(result) {
+                  console.log(result);
+                });
+
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
                 
                 socket.on('connect', function() {
@@ -80,8 +100,9 @@ var CHATSEC = CHATSEC || (function(){
                 socket.on('message', function(data) {
                     if (data.msg == 'chatsec-user-typing'){
                         if(Cookies.get('name') != data.user ){
-                            // $('.typing').find('img').attr('src', Cookies.get('avatar'))
+                            $('.typing').find('.typing_avatar').attr('src', '/static/imgs/avatars/' + data.avatar);
                             $('.typing').show().delay(750).fadeOut();
+                            $('#chat').scrollTop($('#chat')[0].scrollHeight);                            
                         }
                     } else {
                         unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
@@ -92,6 +113,10 @@ var CHATSEC = CHATSEC || (function(){
                         if(Cookies.get('name') != data.user ){
                             var audio = new Audio('/static/audio/new_msg.mp3');
                             audio.play();
+                            spawnNotification(
+                                filtered_msg, 
+                                'http://www.google.com/', 
+                                'SellYourFaith - ' + data.user )                            
                         }
                     }
                 });

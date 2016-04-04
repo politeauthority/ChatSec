@@ -25,3 +25,6 @@ html,body{
     max-width: 500px;
 }
 
+.typing {
+    border-bottom:0px !important;
+}

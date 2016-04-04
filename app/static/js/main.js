@@ -10,6 +10,7 @@ var password = 'L0ck it up saf3';
 var socket;
 
 $(document).ready(function(){
+    $('.typing').hide();
     $("#text").focus();
     socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
     
@@ -18,21 +19,23 @@ $(document).ready(function(){
     });
     
     socket.on('status', function(data) {
-        console.log(data);
         $('#chat').append(data.tpl);
         $('#chat').scrollTop($('#chat')[0].scrollHeight);
     });
 
     socket.on('message', function(data) {
-        unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
-        $('#chat').append(data.tpl);
-        $('#chat li:last-child .msg_content').text(unencrypted_msg);
-        $('#chat').scrollTop($('#chat')[0].scrollHeight);
-        var audio = new Audio('/static/audio/new_msg.mp3');
-        // audio.play();
-    });
-    socket.on('typing', function(data) {
-        console.log('some ones fucking typing');
+        if (data.msg == 'chatsec-user-typing'){
+            $('.typing').show().delay(750).fadeOut();;
+        } else {
+            unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
+            filtered_msg = filter_msg( unencrypted_msg );
+            $(data.tpl).insertBefore('#chat li:last');
+            // console.log($('#chat li:nth-last-child(2)').find('.msg_content').html('hey'));
+            $('#chat li:nth-last-child(2)').find('.msg_content').html(filtered_msg);
+            $('#chat').scrollTop($('#chat')[0].scrollHeight);
+            var audio = new Audio('/static/audio/new_msg.mp3');
+            audio.play();
+        }
     });
 
     $('#text').keypress(function(e) {
@@ -40,10 +43,10 @@ $(document).ready(function(){
         if (code == 13) {
             send_msg($('#text').val());
         } else {
-            // socket.emit('typing', {'msg': 'typing'});            
-            // console.log('typing');
+            socket.emit('text', {'msg': 'chatsec-user-typing'});
         }
     });
+
     $('#send').click(function(e) {
         send_msg($('#text').val());
     });
@@ -55,6 +58,7 @@ $(document).ready(function(){
             var now = new Date();
             var msg_time = new Date( $(this).attr('data-date') );
             diff = Math.round(Math.abs( now - msg_time) / 1000);
+            msg_pretty_time = false;
             if(diff < 60){
                 msg_pretty_time = 'seconds ago';
             } else if(diff < 3600 ){
@@ -65,13 +69,15 @@ $(document).ready(function(){
                     msg_pretty_time = minutes + ' mintues ago';
                 }
             }
-            $(this).find('.msg_date').text(msg_pretty_time);
+            if(msg_pretty_time){
+                $(this).find('.msg_date').text(msg_pretty_time);
+            }
 
             // console.log( index + ": " + $( this ).text() );
         });
 
         // Highlight code blocks
-        $('pre code').each(function(i, block) {
+        $('pre').each(function(i, block) {
             hljs.highlightBlock(block);
         });
     }, 10000);
@@ -93,4 +99,24 @@ function send_msg(msg){
         console.log(msg);
         socket.emit('text', {msg: msg});
     }    
+}
+
+function filter_msg(msg){
+    msg = filter_code(msg);
+    console.log(msg);
+    return msg;
+}
+
+function filter_code(msg){
+    if(msg.substring(0,5)=='/code'){
+        msg = '<pre>' + msg.substring(5) + '</pre>';
+    }
+    return msg;
+}
+
+function filter_code(msg){
+    if(msg.substring(0,5)=='/code'){
+        msg = '<pre>' + msg.substring(5) + '</pre>';
+    }
+    return msg;
 }

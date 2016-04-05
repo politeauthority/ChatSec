@@ -90,7 +90,7 @@ var CHATSEC = CHATSEC || (function(){
             $(document).ready(function(){
                 $('.typing').hide();
                 $("#text").focus();
-
+                // $('#chat_window').hide();
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
                 
                 socket.on('connect', function() {
@@ -98,6 +98,7 @@ var CHATSEC = CHATSEC || (function(){
                 });
                 
                 socket.on('status', function(data) {
+                    console.log( data );
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
@@ -109,6 +110,7 @@ var CHATSEC = CHATSEC || (function(){
                                 'src',
                                 '/static/imgs/avatars/' + data.avatar
                             );
+                            $('.typing').find('h3').text(data.user)
                             $('.typing').show().delay(750).fadeOut();
                             $('#chat').scrollTop($('#chat')[0].scrollHeight);                            
                         }
@@ -148,6 +150,12 @@ var CHATSEC = CHATSEC || (function(){
                             $(this).remove();
                         }
                     });
+                });
+
+                $(window).on('beforeunload', function(){
+                    socket.emit('left', {}, function() {
+                        socket.disconnect();
+                    });                
                 });
 
                 // Timer Scripts

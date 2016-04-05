@@ -9,9 +9,9 @@ def create_app(debug=False):
     """Create an application."""
     app = Flask(__name__, static_url_path='/static')
     app.debug = True
-    app.config['SECRET_KEY'] = 'gjr39dkjn344_!67#'
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+    app.config.from_object('config')
     socketio.init_app(app)
     return app
 

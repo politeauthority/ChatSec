@@ -5,7 +5,7 @@ TRACKING_CODE_FRONTEND = ''  # 'UA-64687340-1'
 TRACKING_CODE_ADMIN = ''     # 'UA-64687340-2'
 
 # Statements for enabling the development environment
-if os.getenv('FLASK_ENV', False) == 'dev':
+if os.getenv('CHATSEC_FLASK_ENV', False) == 'dev':
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = True
 else:
@@ -14,10 +14,10 @@ else:
 # Define the application directory
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 WEB_IP = '0.0.0.0'
-WEB_PORT = os.getenv('FLASK_SECRET_PORT', 5000)
+WEB_PORT = os.getenv('CHATSEC_FLASK_PORT', 5000)
 
 # Load jQuery and Twitter Bootstrap from local server or CDN
-USE_CDN = True
+USE_CDN = os.getenv('CHATSEC_USE_CDN', True)
 
 # Application threads. A common general assumption is
 # using 2 per available processor cores - to handle

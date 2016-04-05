@@ -2,8 +2,13 @@
     <head>
         <title>SellYourFaith: {{ room }}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">      
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" media="screen">
-        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">        
+        {%if config['USE_CDN'] %}        
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" media="screen">
+            <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/default.min.css">
+        {%else%}
+            <link rel="stylesheet" href="/static/css/bootstrap.3.3.6.min.css">
+            <link rel="stylesheet" href="/static/css/highlightjs.9.2.0.min.css">
+        {%endif%}
         <link href="/static/css/main.css" rel="stylesheet" media="screen">
     </head>
     <body>
@@ -16,10 +21,16 @@
           </ul>
         </nav>    
         {% block content %}{% endblock %}
-        <script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.min.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-        <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/highlight.min.js"></script> -->
+
+        {%if config['USE_CDN'] %}
+            <script type="text/javascript" src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+            <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        {%else%}
+            <script src="/static/js/jquery-1.9.1.min.js"></script>
+            <script src="/static/js/socket.io.1.3.6.min.js"></script>
+            <script src="/static/js/bootstrap.3.3.6.min.js"></script>        
+        {%endif%}
         <script src="/static/js/aes.js"></script>
         <script src="/static/js/aes-ctr.js"></script>
         <script src="/static/js/js.cookie.js"></script>

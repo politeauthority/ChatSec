@@ -11,16 +11,11 @@ def joined(message):
     A status message is broadcast to all people in the room."""
     room = session.get('room')
     join_room(room)
-    msg_info = {
-        # 'msg': message['msg'],
-        # 'user': session.get('name'),
-        # 'avatar': session.get('avatar'),
-        # 'date': str(datetime.now()),
-    }
     data = {
+        'msg': '@%s joined the room.' % session.get('name'),
         'user': session.get('name'),
         'avatar': session.get('avatar'),
-        'msg': '@%s joined the room.' % session.get('name')
+        'date': str(datetime.now())
     }
     data['tpl'] = render_template('msg.html', **data)
     emit('status', data, room=room)

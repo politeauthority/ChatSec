@@ -18,7 +18,7 @@ function leave_room(){
 }
 
 function send_msg(msg){
-    if(msg != ''){
+    if(msg.trim() != ''){
         $('#text').val('');
         msg = Aes.Ctr.encrypt(msg, password, 256)
         console.log(msg);
@@ -47,6 +47,11 @@ function filter_href(msg){
     if(msg.match(geturl) && msg.match(geturl).length){
         msg.match(geturl).forEach(function(_url){
             msg = msg.replace(_url, '<a href="'+_url+'" target="_new">'+_url+'</a>')
+            ext = _url.slice(-4)
+            if(ext=='jpeg' || ext=='.jpg' || ext=='.gif' || ext=='.png'){
+                msg = msg + '<br/><img class="chat-img img-responsive" src="'+_url+'">';
+                console.log(msg);                
+            }
         });
     }
     return msg;
@@ -100,7 +105,10 @@ var CHATSEC = CHATSEC || (function(){
                 socket.on('message', function(data) {
                     if (data.msg == 'chatsec-user-typing'){
                         if(Cookies.get('name') != data.user ){
-                            $('.typing').find('.typing_avatar').attr('src', '/static/imgs/avatars/' + data.avatar);
+                            $('.typing').find('.typing_avatar').attr(
+                                'src',
+                                '/static/imgs/avatars/' + data.avatar
+                            );
                             $('.typing').show().delay(750).fadeOut();
                             $('#chat').scrollTop($('#chat')[0].scrollHeight);                            
                         }
@@ -152,9 +160,9 @@ var CHATSEC = CHATSEC || (function(){
                         msg_pretty_time = false;
                         if(diff < 20){
                             msg_pretty_time = 'seconds ago';
-                        }else if(diff < 3600 ){
+                        }else if(diff < 60){
                             msg_pretty_time = 'less then a minute ago'
-                        } else if(diff < 3600 ){
+                        } else if(diff < 3600){
                             minutes = Math.round(diff / 60);
                             if(minutes == 1){
                                 msg_pretty_time = '1 minute ago';

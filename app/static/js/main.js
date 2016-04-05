@@ -116,7 +116,7 @@ var CHATSEC = CHATSEC || (function(){
                             spawnNotification(
                                 filtered_msg, 
                                 'http://www.google.com/', 
-                                'SellYourFaith - ' + data.user )                            
+                                'SellYourFaith - ' + data.user );
                         }
                     }
                 });

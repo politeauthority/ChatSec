@@ -9,3 +9,5 @@ class LoginForm(Form):
     room = StringField('Room', validators=[Required()])
     password = StringField('Password', validators=[Required()])
     submit = SubmitField('Enter Chatroom')
+
+# End File: app/main/forms.py

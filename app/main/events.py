@@ -1,7 +1,6 @@
 from flask import session, render_template
 from flask.ext.socketio import emit, join_room, leave_room
 from .. import socketio
-import chat_filters
 from datetime import datetime
 
 
@@ -27,7 +26,7 @@ def msg(message):
     The message is sent to all people in the room."""
     room = session.get('room')
     data = {
-        'msg': chat_filters.run(message['msg']),
+        'msg': message['msg'],
         'user': session.get('name'),
         'avatar': session.get('avatar'),
         'date': str(datetime.now()),
@@ -53,6 +52,8 @@ def left(message):
         'date': str(datetime.now()),
     }
     msg_info['tpl'] = render_template('msg.html', **msg_info)
-    emit('status', {'msg': session.get('name') + ' has left the room.'}, room=room)
+    emit('status',
+         {'msg': session.get('name') + ' has left the room.'},
+         room=room)
 
 # End File: app/main/events.py

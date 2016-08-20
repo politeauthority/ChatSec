@@ -1,3 +1,6 @@
+import random
+
+
 def get_avatar():
     imgs = [
         'Baby_48.png',

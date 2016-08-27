@@ -4,5 +4,4 @@ docker run \
     -p '8081:5000' \
     -e VIRTUAL_HOST=sellyour.faith \
     -e FLASK_PORT=8080 \
-    -d \
-    chat-sec
+    chat_sec

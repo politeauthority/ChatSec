@@ -37,6 +37,7 @@ def msg(message):
 
 @socketio.on('typing', namespace='/chat')
 def typing(message):
+    room = session.get('room')
     emit('status', {'msg': 'typing'}, room=room)
 
 

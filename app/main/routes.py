@@ -1,24 +1,17 @@
-from flask import session, redirect, url_for, render_template, request,
-from flask import send_from_directory
+from flask import session, redirect, url_for, render_template, request
 from . import main
-from .forms import LoginForm
 import avatars
-import random
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
     """"Login form to enter a room."""
-    form = LoginForm()
-    if form.validate_on_submit():
-        session['name'] = form.name.data
-        session['room'] = form.room.data
-        session['password'] = form.password.data
+    if len(request.form) > 0:
+        session['username'] = request.form['username']
+        session['room'] = request.form['room']
+        session['password'] = request.form['password']
         return redirect(url_for('.chat'))
-    elif request.method == 'GET':
-        form.name.data = session.get('name', '')
-        form.room.data = session.get('room', '')
-    return render_template('index.html', form=form)
+    return render_template('index.html')
 
 
 @main.route('/chat')
@@ -28,13 +21,19 @@ def chat():
     if 'avatar' not in session:
         session['avatar'] = avatars.get_avatar()
     data = {
-        'name': session.get('name', ''),
+        'username': session.get('username', ''),
         'avatar': session.get('avatar'),
         'room': session.get('room', ''),
         'password': session.get('password', '')
     }
-    if data['name'] == '' or data['room'] == '':
+    if data['username'] == '' or data['room'] == '':
         return redirect(url_for('.index'))
     return render_template('chat.html', **data)
+
+
+@main.route('/logout')
+def logout():
+    session.destroy()
+    return redirect(url_for('.index'))
 
 # End File: app/main/routes.py

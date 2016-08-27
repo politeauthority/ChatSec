@@ -98,44 +98,44 @@ var CHATSEC = CHATSEC || (function(){
                 });
                 
                 socket.on('status', function(data) {
-                    console.log( data );
+                    // console.log( data );
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
+                // Typing a message
                 socket.on('test1', function(data) {
                     console.log('fuck yeaah');
-                });
-
-                socket.on('message', function(data) {
-                    if (data.msg == 'chatsec-user-typing'){
-                        // if(Cookies.get('name') != data.username ){
-                        //     $('.typing').find('.typing_avatar').attr(
-                        //         'src',
-                        //         '/static/imgs/avatars/' + data.avatar
-                        //     );
-                        //     $('.typing').find('h3').text(data.username)
-                        //     $('.typing').show().delay(750).fadeOut();
-                        //     $('#chat').scrollTop($('#chat')[0].scrollHeight);                            
-                        // }
-                    } else {
-                        unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
-                        filtered_msg = filter_msg( unencrypted_msg );
-                        $(data.tpl).insertBefore('#chat li:last');
-                        $('#chat li:nth-last-child(2)').find('.msg_content').html(filtered_msg);
+                    console.log();
+                    if(Cookies.get('name') != data.username ){
+                        $('.typing').find('.typing_avatar').attr(
+                            'src',
+                            '/static/imgs/avatars/' + data.avatar
+                        );
+                        $('.typing').find('h3').text(data.username)
+                        $('.typing').show().delay(750).fadeOut();
                         $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                        if(Cookies.get('name') != data.username ){
-                            var audio = new Audio('/static/audio/new_msg.mp3');
-                            audio.play();
-                            spawnNotification(
-                                filtered_msg, 
-                                'http://www.google.com/', 
-                                'ChatSec - ' + data.username );
-                        }
                     }
                 });
 
-                // Type Box
+                // Recieving a message
+                socket.on('message', function(data) {
+                    unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
+                    filtered_msg = filter_msg( unencrypted_msg );
+                    $(data.tpl).insertBefore('#chat li:last');
+                    $('#chat li:nth-last-child(2)').find('.msg_content').html(filtered_msg);
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                    if(Cookies.get('name') != data.username ){
+                        var audio = new Audio('/static/audio/new_msg.mp3');
+                        audio.play();
+                        spawnNotification(
+                            filtered_msg, 
+                            'http://www.google.com/', 
+                            'ChatSec - ' + data.username );
+                    }
+                });
+
+                // Sending a message
                 $('#text').keypress(function(e) {
                     var code = e.keyCode || e.which;
                     if (code == 13) {
@@ -151,6 +151,7 @@ var CHATSEC = CHATSEC || (function(){
                     send_msg($('#text').val());
                 });
 
+                // @todo: make this work across the socket and hit all clients
                 $('#clear_msgs').click(function(e){
                     $('#chat li').each(function(){
                         if(!$(this).hasClass('typing')){

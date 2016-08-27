@@ -8,11 +8,12 @@ from datetime import datetime
 def joined(message):
     """Sent by clients when they enter a room.
     A status message is broadcast to all people in the room."""
+    print '\n EVENT:   JOINED\n'
     room = session.get('room')
     join_room(room)
     data = {
-        'msg': '@%s joined the room.' % session.get('name'),
-        'user': session.get('name'),
+        'msg': '@%s joined the room.' % session.get('username'),
+        'username': session.get('username'),
         'avatar': session.get('avatar'),
         'date': str(datetime.now())
     }
@@ -24,19 +25,24 @@ def joined(message):
 def msg(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
+    print '\n EVENT:   MSG\n'
+    print 'session %s' % session.get('username')
+    print ''
     room = session.get('room')
     data = {
         'msg': message['msg'],
-        'user': session.get('name'),
+        'username': session.get('username'),
         'avatar': session.get('avatar'),
         'date': str(datetime.now()),
     }
     data['tpl'] = render_template('msg.html', **data)
+    print data
     emit('message', data, room=room)
 
 
 @socketio.on('typing', namespace='/chat')
 def typing(message):
+    print '\n EVENT:   TYPING\n'
     room = session.get('room')
     emit('status', {'msg': 'typing'}, room=room)
 
@@ -45,6 +51,8 @@ def typing(message):
 def left(message):
     """Sent by clients when they leave a room.
     A status message is broadcast to all people in the room."""
+    print '\n EVENT:   LEAVE\n'
+    print message
     room = session.get('room')
     leave_room(room)
     msg_info = {

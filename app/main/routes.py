@@ -26,6 +26,9 @@ def chat():
         'room': session.get('room', ''),
         'password': session.get('password', '')
     }
+    print '\n'
+    print session
+    print ' '
     if data['username'] == '' or data['room'] == '':
         return redirect(url_for('.index'))
     return render_template('chat.html', **data)
@@ -33,7 +36,9 @@ def chat():
 
 @main.route('/logout')
 def logout():
-    session.destroy()
+    session.pop('username')
+    session.pop('room')
+    session.pop('password')
     return redirect(url_for('.index'))
 
 # End File: app/main/routes.py

@@ -18,10 +18,12 @@ function leave_room(){
 }
 
 function send_msg(msg){
-    if(msg.trim() != ''){
+    msg = msg.trim();
+    if(msg != ''){
         $('#text').val('');
+        // console.log(msg);
         msg = Aes.Ctr.encrypt(msg, password, 256)
-        console.log(msg);
+        // console.log(msg);
         socket.emit('text', {msg: msg});
     }    
 }
@@ -50,7 +52,7 @@ function filter_href(msg){
             ext = _url.slice(-4)
             if(ext=='jpeg' || ext=='.jpg' || ext=='.gif' || ext=='.png'){
                 msg = msg + '<br/><img class="chat-img img-responsive" src="'+_url+'">';
-                console.log(msg);                
+                // console.log(msg);                
             }
         });
     }
@@ -105,12 +107,12 @@ var CHATSEC = CHATSEC || (function(){
 
                 socket.on('message', function(data) {
                     if (data.msg == 'chatsec-user-typing'){
-                        if(Cookies.get('name') != data.user ){
+                        if(Cookies.get('name') != data.username ){
                             $('.typing').find('.typing_avatar').attr(
                                 'src',
                                 '/static/imgs/avatars/' + data.avatar
                             );
-                            $('.typing').find('h3').text(data.user)
+                            $('.typing').find('h3').text(data.username)
                             $('.typing').show().delay(750).fadeOut();
                             $('#chat').scrollTop($('#chat')[0].scrollHeight);                            
                         }
@@ -120,13 +122,13 @@ var CHATSEC = CHATSEC || (function(){
                         $(data.tpl).insertBefore('#chat li:last');
                         $('#chat li:nth-last-child(2)').find('.msg_content').html(filtered_msg);
                         $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                        if(Cookies.get('name') != data.user ){
+                        if(Cookies.get('name') != data.username ){
                             var audio = new Audio('/static/audio/new_msg.mp3');
                             audio.play();
                             spawnNotification(
                                 filtered_msg, 
                                 'http://www.google.com/', 
-                                'SellYourFaith - ' + data.user );
+                                'SellYourFaith - ' + data.username );
                         }
                     }
                 });

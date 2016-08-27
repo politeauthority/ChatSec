@@ -104,10 +104,8 @@ var CHATSEC = CHATSEC || (function(){
                 });
 
                 // Typing a message
-                socket.on('test1', function(data) {
-                    console.log('fuck yeaah');
-                    console.log();
-                    if(Cookies.get('name') != data.username ){
+                socket.on('typing', function(data) {
+                    if(Cookies.get('username') != data.username ){
                         $('.typing').find('.typing_avatar').attr(
                             'src',
                             '/static/imgs/avatars/' + data.avatar
@@ -143,7 +141,7 @@ var CHATSEC = CHATSEC || (function(){
                         send_msg(message);
                     } else {
                         // console.log('typing!');
-                        socket.emit('test1', {'msg': 'chatsec-user-typing'});
+                        socket.emit('typing', {'msg': 'chatsec-user-typing'});
                     }
                 });
 

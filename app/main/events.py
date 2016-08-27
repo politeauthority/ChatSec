@@ -26,8 +26,6 @@ def msg(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
     print '\n EVENT:   MSG\n'
-    print 'session %s' % session.get('username')
-    print ''
     room = session.get('room')
     data = {
         'msg': message['msg'],
@@ -40,29 +38,15 @@ def msg(message):
     emit('message', data, room=room)
 
 
-@socketio.on('test1', namespace='/chat')
-def test1(message):
-    """Sent by a client when the user entered a new message.
-    The message is sent to all people in the room."""
-    print '\n EVENT:   TEST1\n'
-    print 'session %s' % session.get('username')
-    print 'is typing'
-    print message
-    print ''
-    print '\n{DEBUG} %s\n' % 'do this dawg'
+@socketio.on('typing', namespace='/chat')
+def typing(message):
+    """Sent by a client when the user is typing."""
     room = session.get('room')
     data = {
-        'username': session.get('username'),    
+        'username': session.get('username'),
         'avatar': session.get('avatar')
     }
-    emit('test1', data, room=room)
-
-
-# @socketio.on('typing', namespace='/chat')
-# def typing(message):
-#     print '\n EVENT:   TYPING\n'
-#     room = session.get('room')
-#     emit('status', {'msg': 'typing'}, room=room)
+    emit('typing', data, room=room)
 
 
 @socketio.on('left', namespace='/chat')

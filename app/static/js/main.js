@@ -21,10 +21,8 @@ function send_msg(msg){
     msg = msg.trim();
     if(msg != ''){
         $('#text').val('');
-        // console.log(msg);
         msg = Aes.Ctr.encrypt(msg, password, 256)
-        // console.log(msg);
-        socket.emit('text', {msg: msg});
+        socket.emit('text', {'msg': msg});
     }    
 }
 
@@ -105,17 +103,21 @@ var CHATSEC = CHATSEC || (function(){
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
+                socket.on('test1', function(data) {
+                    console.log('fuck yeaah');
+                });
+
                 socket.on('message', function(data) {
                     if (data.msg == 'chatsec-user-typing'){
-                        if(Cookies.get('name') != data.username ){
-                            $('.typing').find('.typing_avatar').attr(
-                                'src',
-                                '/static/imgs/avatars/' + data.avatar
-                            );
-                            $('.typing').find('h3').text(data.username)
-                            $('.typing').show().delay(750).fadeOut();
-                            $('#chat').scrollTop($('#chat')[0].scrollHeight);                            
-                        }
+                        // if(Cookies.get('name') != data.username ){
+                        //     $('.typing').find('.typing_avatar').attr(
+                        //         'src',
+                        //         '/static/imgs/avatars/' + data.avatar
+                        //     );
+                        //     $('.typing').find('h3').text(data.username)
+                        //     $('.typing').show().delay(750).fadeOut();
+                        //     $('#chat').scrollTop($('#chat')[0].scrollHeight);                            
+                        // }
                     } else {
                         unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
                         filtered_msg = filter_msg( unencrypted_msg );
@@ -128,17 +130,20 @@ var CHATSEC = CHATSEC || (function(){
                             spawnNotification(
                                 filtered_msg, 
                                 'http://www.google.com/', 
-                                'SellYourFaith - ' + data.username );
+                                'ChatSec - ' + data.username );
                         }
                     }
                 });
 
+                // Type Box
                 $('#text').keypress(function(e) {
                     var code = e.keyCode || e.which;
                     if (code == 13) {
-                        send_msg($('#text').val());
+                        message = $('#text').val();
+                        send_msg(message);
                     } else {
-                        socket.emit('text', {'msg': 'chatsec-user-typing'});
+                        // console.log('typing!');
+                        socket.emit('test1', {'msg': 'chatsec-user-typing'});
                     }
                 });
 

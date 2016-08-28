@@ -66,11 +66,16 @@
             <form>
                 Enable Audio
             </form>
-            <div>
-                DEBUG
-                <br>
-                username: {{username}}
-            </div>
+            {%if config['DEBUG'] %}
+                <div>
+                    <b>DEBUG</b>
+                    <br>
+                    username: {{username}} <br>
+                    session['user_key'] = {{session['user_key']}} <br>
+                    debug: {{config['DEBUG']}}
+                    
+                </div>
+            {%endif%}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -28,7 +28,7 @@
                             <img class="img-responsive typing_avatar" src="">
                         </div>
                         <div class="col-sm-8">
-                            <h3>ss</h3><br/>
+                            <h3></h3><br/>
                             <span class="msg_content">
                                 <img src="/static/imgs/typing.gif">
                             </span>                            
@@ -66,6 +66,17 @@
             <form>
                 Enable Audio
             </form>
+            {%if config['DEBUG'] %}
+                <div>
+                    <b>DEBUG</b>
+                    <br>
+                    username: {{username}} <br>
+                    session['user_key'] = {{session['user_key']}} <br>
+                    debug: {{config['DEBUG']}}<br>
+                    password: {{password}}<br>
+                    
+                </div>
+            {%endif%}
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -77,7 +88,7 @@
 
 {% block script %}
     <script type="text/javascript">
-        CHATSEC.init(["{{name}}", "password", "{{avatar}}"]);
+        CHATSEC.init(["{{name}}", "{{password}}", "{{avatar}}"]);
         $(document).ready(function(){
             CHATSEC.launch();
         });

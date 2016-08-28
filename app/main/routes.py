@@ -1,6 +1,8 @@
 from flask import session, redirect, url_for, render_template, request
 from . import main
 import avatars
+from datetime import datetime
+import hashlib
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -8,6 +10,7 @@ def index():
     """"Login form to enter a room."""
     if len(request.form) > 0:
         session['username'] = request.form['username']
+        session['user_key'] = gen_user_key(session['username'])
         session['room'] = request.form['room']
         session['password'] = request.form['password']
         return redirect(url_for('.chat'))
@@ -26,6 +29,9 @@ def chat():
         'room': session.get('room', ''),
         'password': session.get('password', '')
     }
+    print '\n'
+    print session
+    print ' '
     if data['username'] == '' or data['room'] == '':
         return redirect(url_for('.index'))
     return render_template('chat.html', **data)
@@ -33,7 +39,14 @@ def chat():
 
 @main.route('/logout')
 def logout():
-    session.destroy()
+    session.pop('username')
+    session.pop('room')
+    session.pop('password')
     return redirect(url_for('.index'))
+
+
+def gen_user_key(username):
+    user_key = username + str(datetime.now())
+    return hashlib.md5(user_key).hexdigest()
 
 # End File: app/main/routes.py

@@ -1,4 +1,4 @@
-<li class="row" data-user="{{user_name}}" data-date="{{date}}" data-type="{{data_type}}">
+<li class="row" data-user="{{user_name}}" data-date="{{sent}}" data-type="{{data_type}}">
     <div class="col-sm-1 col-md-1 user_image_container">
         <img class="img-responsive user_image" src="/static/imgs/avatars/white/{{avatar}}">
     </div>
@@ -7,6 +7,6 @@
         <small class="msg_date">just now</small><br>
         <span class="msg_content">{%if data_type=='joined'%}{{msg}}{%endif%}</span>
 <!--         <br>
-        <span>{{date}}</span> -->
+        <span>{{sent}}</span> -->
     </div>
 </li>

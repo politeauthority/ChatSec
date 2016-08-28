@@ -41,7 +41,6 @@ function filter_href(msg){
             ext = _url.slice(-4)
             if(ext=='jpeg' || ext=='.jpg' || ext=='.gif' || ext=='.png'){
                 msg = msg + '<br/><img class="chat-img img-responsive" src="'+_url+'">';
-                // console.log(msg);                
             }
         });
     }
@@ -59,6 +58,90 @@ function spawnNotification(theBody,theIcon,theTitle) {
     }
 }
 
+function store_message(data){
+    data_string = (JSON.stringify(data));
+    room_key = 'room_' + data.room_name;
+
+    chat_room_data = JSON.parse(localStorage.getItem(room_key));
+    chat_room_data.push(data_string);
+    localStorage.setItem(room_key, JSON.stringify(chat_room_data));
+}
+
+function build_local_data(room_name){
+    room_key = 'room_' + room_name;
+    // localStorage.setItem(room_key, '[]');
+    chat_room_data = JSON.parse(localStorage.getItem(room_key));
+    if(chat_room_data == null){
+        empty_array = array();
+        localStorage.setItem(room_key, JSON.stringify(empty_array));
+    }
+    for(chat of chat_room_data){
+        c = JSON.parse(chat);
+        write_msg(c);
+    }
+}
+
+function write_msg(msg_obj){
+    unencrypted_msg = Aes.Ctr.decrypt(msg_obj.msg, Cookies.get('password'), 256);    
+    filtered_msg = filter_msg( unencrypted_msg );
+    $(msg_obj.tpl).insertBefore('#chat li:last');
+    new_msg_li = $('#chat li:nth-last-child(2)');
+    new_msg_li.find('.msg_content').html(filtered_msg);
+    new_msg_user = new_msg_li.attr('data-user');
+
+    // check if the last message was the same person and recent
+    previous_message = $('#chat li:nth-last-child(3)');
+    previous_message_type = previous_message.attr('data-type');
+    append_to_last = false;
+    if( 
+         previous_message.attr('data-user') == new_msg_user
+        &&
+        previous_message_type == 'msg')
+        {
+        previous_message_time = new Date(previous_message.attr('data-date'));
+        diff = Math.round(Math.abs((new Date() - previous_message_time) / 1000));
+        if(diff < 120){
+            append_to_last = true;
+        }
+    }
+
+    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+    if( previous_message_type == 'msg'){
+    if(append_to_last == true){
+            new_msg_li.find('h3').hide();
+            new_msg_li.find('.msg_date').hide();
+            new_msg_li.addClass('no_break_above');
+            previous_message.addClass('no_break_below');
+            // new_msg_li.find('.user_image_container').hide()
+        } else {
+            // previous_message.removeClass('no_break');
+            // new_msg_li.addClass('no_break');
+        }
+    }
+    msg_pretty_time = pretty_time_now(msg_obj.sent)
+    new_msg_li.find('.msg_date').text(msg_pretty_time);    
+}
+
+function pretty_time_now(msg_time){
+    var now = new Date();
+    diff = Math.round(Math.abs( now - msg_time) / 1000);
+    msg_pretty_time = false;
+    if(diff < 20){
+        msg_pretty_time = 'seconds ago';
+    }else if(diff < 60){
+        msg_pretty_time = 'less then a minute ago'
+    } else if(diff < 3600){
+        minutes = Math.round(diff / 60);
+        if(minutes == 1){
+            msg_pretty_time = '1 minute ago';
+        } else {
+            msg_pretty_time = minutes + ' mintues ago';
+        }
+    } else {
+        msg_pretty_time = false;
+    }
+    return msg_pretty_time;
+}
 
 var CHATSEC = CHATSEC || (function(){
     var _args = {}; // private
@@ -66,10 +149,10 @@ var CHATSEC = CHATSEC || (function(){
     return {
         init : function(Args) {
             _args = Args;
-            console.log( 'starting' );
-            Cookies.set('name', _args[0]);
+            Cookies.set('user_name', _args[0]);
             Cookies.set('password', _args[1]);
             Cookies.set('avatar', _args[2]);
+            Cookies.set('room_name', _args[3]);
 
             Notification.requestPermission().then(function(result) {
               console.log(result);
@@ -81,6 +164,7 @@ var CHATSEC = CHATSEC || (function(){
             $(document).ready(function(){
                 $('.typing').hide();
                 $("#text").focus();
+                build_local_data(Cookies.get('room_name'))
                 // $('#chat_window').hide();
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
                 
@@ -89,17 +173,16 @@ var CHATSEC = CHATSEC || (function(){
                 });
                 
                 socket.on('status', function(data) {
-                    // console.log( data );
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
                 // Typing a message
                 socket.on('typing', function(data) {
-                    if(Cookies.get('username') != data.username ){
+                    if(Cookies.get('user_name') != data.username ){
                         $('.typing').find('.typing_avatar').attr(
                             'src',
-                            '/static/imgs/avatars/' + data.avatar
+                            '/static/imgs/avatars/white/' + data.avatar
                         );
                         $('.typing').find('h3').text(data.username)
                         $('.typing').show().delay(750).fadeOut();
@@ -109,19 +192,17 @@ var CHATSEC = CHATSEC || (function(){
 
                 // Recieving a message
                 socket.on('message', function(data) {
-                    unencrypted_msg = Aes.Ctr.decrypt(data.msg, Cookies.get('password'), 256);
-                    filtered_msg = filter_msg( unencrypted_msg );
-                    $(data.tpl).insertBefore('#chat li:last');
-                    $('#chat li:nth-last-child(2)').find('.msg_content').html(filtered_msg);
-                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                    if(Cookies.get('name') != data.username ){
+                    write_msg(data);
+
+                    if(Cookies.get('user_name') != data.user_name ){
                         var audio = new Audio('/static/audio/new_msg.mp3');
                         audio.play();
                         spawnNotification(
                             filtered_msg, 
                             'http://www.google.com/', 
-                            'ChatSec - ' + data.username );
+                            'ChatSec - ' + data.user_name );
                     }
+                    store_message(data);
                 });
 
                 // Sending a message
@@ -131,7 +212,6 @@ var CHATSEC = CHATSEC || (function(){
                         message = $('#text').val();
                         send_msg(message);
                     } else {
-                        // console.log('typing!');
                         socket.emit('typing', {'msg': 'chatsec-user-typing'});
                     }
                 });
@@ -159,24 +239,8 @@ var CHATSEC = CHATSEC || (function(){
                 window.setInterval(function(){
                     // Update msg time
                     $("#chat li").each(function( index ) {
-                        var now = new Date();
-                        var msg_time = new Date( $(this).attr('data-date') );
-                        diff = Math.round(Math.abs( now - msg_time) / 1000);
-                        msg_pretty_time = false;
-                        if(diff < 20){
-                            msg_pretty_time = 'seconds ago';
-                        }else if(diff < 60){
-                            msg_pretty_time = 'less then a minute ago'
-                        } else if(diff < 3600){
-                            minutes = Math.round(diff / 60);
-                            if(minutes == 1){
-                                msg_pretty_time = '1 minute ago';
-                            } else {
-                                msg_pretty_time = minutes + ' mintues ago';
-                            }
-                        } else {
-                            msg_pretty_time = false;
-                        }
+                        var sent_time = new Date( $(this).attr('data-date') );
+                        msg_pretty_time = pretty_time_now(sent_time)
                         if(msg_pretty_time){
                             $(this).find('.msg_date').text(msg_pretty_time);
                         }

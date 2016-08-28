@@ -9,9 +9,9 @@ import hashlib
 def index():
     """"Login form to enter a room."""
     if len(request.form) > 0:
-        session['username'] = request.form['username']
-        session['user_key'] = gen_user_key(session['username'])
-        session['room'] = request.form['room']
+        session['user_name'] = request.form['user_name']
+        session['user_key'] = gen_user_key(session['user_name'])
+        session['room_name'] = request.form['room_name']
         session['password'] = request.form['password']
         return redirect(url_for('.chat'))
     return render_template('index.html')
@@ -24,29 +24,30 @@ def chat():
     if 'avatar' not in session:
         session['avatar'] = avatars.get_avatar()
     data = {
-        'username': session.get('username', ''),
+        'user_name': session.get('user_name', ''),
         'avatar': session.get('avatar'),
-        'room': session.get('room', ''),
+        'room_name': session.get('room_name', ''),
         'password': session.get('password', '')
     }
     print '\n'
     print session
     print ' '
-    if data['username'] == '' or data['room'] == '':
+    if data['user_name'] == '' or data['room_name'] == '':
         return redirect(url_for('.index'))
     return render_template('chat.html', **data)
 
 
 @main.route('/logout')
 def logout():
-    session.pop('username')
-    session.pop('room')
+    session.pop('user_name')
+    session.pop('user_key')
+    session.pop('room_name')
     session.pop('password')
     return redirect(url_for('.index'))
 
 
-def gen_user_key(username):
-    user_key = username + str(datetime.now())
+def gen_user_key(user_name):
+    user_key = user_name + str(datetime.now())
     return hashlib.md5(user_key).hexdigest()
 
 # End File: app/main/routes.py

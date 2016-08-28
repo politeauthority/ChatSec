@@ -1,6 +1,15 @@
 html,body{
     height: 100%
 }
+
+#login {
+    
+    text-align: left;
+}
+
+#login input{
+    color:black;    
+}
 #chat{
     width: 100%;
     height: 400px;
@@ -12,7 +21,7 @@ html,body{
     margin-left: -48px;
     padding-top: 10px;
     padding-bottom: 10px;
-    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
 }
 #chat h3{
     font-size:17px;
@@ -28,7 +37,15 @@ html,body{
 .typing {
     border-bottom:0px !important;
 }
-
+.no_break_above {
+    margin-top:0 !important;
+    padding-top:0 !important;
+    border-top: 0 !important;
+}
+.no_break_below {
+    margin-bottom:0 !important;
+    padding-bottom:0 !important;
+}
 #text_box{
     bottom:0;
     position: absolute;

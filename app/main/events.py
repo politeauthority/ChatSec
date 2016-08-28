@@ -12,10 +12,11 @@ def joined(message):
     room = session.get('room')
     join_room(room)
     data = {
-        'msg': '@%s joined the room.' % session.get('username'),
-        'username': session.get('username'),
+        'msg': '@%s joined the room.' % session.get('user_name'),
+        'user_name': session.get('user_name'),
         'avatar': session.get('avatar'),
-        'date': str(datetime.now())
+        'date': str(datetime.now()),
+        'data_type': 'joined'
     }
     data['tpl'] = render_template('msg.html', **data)
     emit('status', data, room=room)
@@ -29,9 +30,10 @@ def msg(message):
     room = session.get('room')
     data = {
         'msg': message['msg'],
-        'username': session.get('username'),
+        'user_name': session.get('user_name'),
         'avatar': session.get('avatar'),
         'date': str(datetime.now()),
+        'data_type': 'msg'
     }
     data['tpl'] = render_template('msg.html', **data)
     print data
@@ -43,7 +45,7 @@ def typing(message):
     """Sent by a client when the user is typing."""
     room = session.get('room')
     data = {
-        'username': session.get('username'),
+        'user_name': session.get('user_name'),
         'avatar': session.get('avatar')
     }
     emit('typing', data, room=room)
@@ -58,13 +60,13 @@ def left(message):
     room = session.get('room')
     leave_room(room)
     msg_info = {
-        'msg': message['msg'],
-        'user': session.get('name'),
+        'msg': message['message'],
+        'user': session.get('user_name'),
         'date': str(datetime.now()),
     }
     msg_info['tpl'] = render_template('msg.html', **msg_info)
     emit('status',
-         {'msg': session.get('name') + ' has left the room.'},
+         {'msg': session.get('user_name') + ' has left the room.'},
          room=room)
 
 # End File: app/main/events.py

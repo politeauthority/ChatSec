@@ -1,10 +1,12 @@
-<li class="row" data-user="{{username}}" data-date="{{date}}">
-    <div class="col-sm-1 col-md-1 user_image">
+<li class="row" data-user="{{user_name}}" data-date="{{date}}" data-type="{{data_type}}">
+    <div class="col-sm-1 col-md-1 user_image_container">
         <img class="img-responsive user_image" src="/static/imgs/avatars/white/{{avatar}}">
     </div>
     <div class="col-sm-8">
-        <h3>{{username}}</h3>
+        <h3>{{user_name}}</h3>
         <small class="msg_date">just now</small><br>
-        <span class="msg_content">{{msg}}</span>
+        <span class="msg_content">{%if data_type=='joined'%}{{msg}}{%endif%}</span>
+<!--         <br>
+        <span>{{date}}</span> -->
     </div>
 </li>

@@ -1,12 +1,3 @@
-/*
-var password = 'L0ck it up saf3';
-var plaintext = 'pssst ... đon’t tell anyøne!';
-var ciphertext = Aes.Ctr.encrypt(plaintext, password, 256);
-var origtext = Aes.Ctr.decrypt(ciphertext, password, 256);
-*/
-
-var password = 'L0ck it up saf3';
-
 var socket;
 
 function leave_room(){
@@ -21,7 +12,7 @@ function send_msg(msg){
     msg = msg.trim();
     if(msg != ''){
         $('#text').val('');
-        msg = Aes.Ctr.encrypt(msg, password, 256)
+        msg = Aes.Ctr.encrypt(msg, Cookies.get('password'), 256)
         socket.emit('text', {'msg': msg});
     }    
 }
@@ -118,7 +109,7 @@ var CHATSEC = CHATSEC || (function(){
 
                 // Recieving a message
                 socket.on('message', function(data) {
-                    unencrypted_msg = Aes.Ctr.decrypt(data.msg, password, 256);
+                    unencrypted_msg = Aes.Ctr.decrypt(data.msg, Cookies.get('password'), 256);
                     filtered_msg = filter_msg( unencrypted_msg );
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat li:nth-last-child(2)').find('.msg_content').html(filtered_msg);

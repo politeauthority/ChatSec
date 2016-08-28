@@ -72,7 +72,8 @@
                     <br>
                     username: {{username}} <br>
                     session['user_key'] = {{session['user_key']}} <br>
-                    debug: {{config['DEBUG']}}
+                    debug: {{config['DEBUG']}}<br>
+                    password: {{password}}<br>
                     
                 </div>
             {%endif%}
@@ -87,7 +88,7 @@
 
 {% block script %}
     <script type="text/javascript">
-        CHATSEC.init(["{{name}}", "password", "{{avatar}}"]);
+        CHATSEC.init(["{{name}}", "{{password}}", "{{avatar}}"]);
         $(document).ready(function(){
             CHATSEC.launch();
         });

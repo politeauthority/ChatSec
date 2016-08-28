@@ -9,9 +9,9 @@ import hashlib
 def index():
     """"Login form to enter a room."""
     if len(request.form) > 0:
-        session['username'] = request.form['username']
+        session['username'] = request.form['user_name']
         session['user_key'] = gen_user_key(session['username'])
-        session['room'] = request.form['room']
+        session['room'] = request.form['room_name']
         session['password'] = request.form['password']
         return redirect(url_for('.chat'))
     return render_template('index.html')

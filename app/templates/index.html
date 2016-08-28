@@ -58,11 +58,22 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
                 <h2>Login</h2>   
-                <form action="/" method="POST">
-                    <input type="text" name="username" placeholder="user name"> <br/>
-                    <input type="text" name="room" placeholder="room"> <br/>
-                    <input type="password" name="password" placeholder="password"> <br/>
-                    <input type="submit" value="Enter">
+                <form action="/" method="POST" lpformnum="1" _lpchecked="1">
+                  <div class="form-group">
+                    <label for="user_name">User Name</label>
+                    <input type="text" class="form-control form-control-lg" name="user_name" id="user_name" aria-describedby="user_name_help" placeholder="Enter user name">
+                    <small id="user_name_help" class="form-text text-muted">We'll never share your information.</small>
+                  </div>
+                  <div class="form-group">
+                    <label for="room_name">Room Name</label>
+                    <input type="text" class="form-control form-control-lg" name="room_name" id="room_name" aria-describedby="room_name_help" placeholder="Enter the room name ">
+                  </div>  
+                  <div class="form-group">
+                    <label for="exampleInputPassword1">Room Password</label>
+                    <input type="password" class="form-control form-control-lg" name="password" id="exampleInputPassword1" placeholder="Password">
+                  </div>
+
+                  <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
             </div>
         </div>
@@ -85,9 +96,9 @@
         <div class="download-section">
             <div class="container">
                 <div class="col-lg-8 col-lg-offset-2">
-                    <h2>Download Grayscale</h2>
+                    <h2>Download ChatSec</h2>
                     <p>You can download Grayscale for free on the preview page at Start Bootstrap.</p>
-                    <a href="http://startbootstrap.com/template-overviews/grayscale/" class="btn btn-default btn-lg">Visit Download Page</a>
+                    <a href="https://github.com/politeauthority/ChatSec/archive/master.zip" class="btn btn-default btn-lg"> ChatSec.zip</a>
                 </div>
             </div>
         </div>

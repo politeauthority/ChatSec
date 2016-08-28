@@ -1,6 +1,15 @@
 html,body{
     height: 100%
 }
+
+#login {
+    
+    text-align: left;
+}
+
+#login input{
+    color:black;    
+}
 #chat{
     width: 100%;
     height: 400px;

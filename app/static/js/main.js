@@ -71,7 +71,6 @@ function build_local_data(room_name){
     room_key = 'room_' + room_name;
     // localStorage.setItem(room_key, '[]');
     chat_room_data = JSON.parse(localStorage.getItem(room_key));
-    console.log(chat_room_data);
     if(chat_room_data == null){
         empty_array = [];
         localStorage.setItem(room_key, JSON.stringify(empty_array));

@@ -35,7 +35,7 @@ def auth():
     session['user_name'] = request.cookies['user_name']
     session['user_key'] = gen_user_key(session['user_name'])
     session['room_name'] = request.cookies['room_name']
-    return redirect(url_for('.chat'))    
+    return redirect(url_for('.chat'))
 
 
 @main.route('/logout')
@@ -43,7 +43,6 @@ def logout():
     session.pop('user_name')
     session.pop('user_key')
     session.pop('room_name')
-    session.pop('password')
     return redirect(url_for('.index'))
 
 

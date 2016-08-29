@@ -8,11 +8,15 @@ html,body{
 }
 
 #login input{
-    color:black;    
+    color:black;
 }
+.cs_login{
+    height:95px;
+    font-size:48pt;
+}
+
 #chat{
     width: 100%;
-    height: 400px;
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -28,6 +32,8 @@ html,body{
     margin: 0;
     display: inline;
     padding-right: 8px;
+}
+#chat_window{
 }
 
 .chat_image{
@@ -47,9 +53,9 @@ html,body{
     padding-bottom:0 !important;
 }
 #text_box{
-    bottom:0;
-    position: absolute;
-    width: 100%
+    bottom:1px;
+    position: fixed;
+    width:100%;
 }
 
 #user_list li {

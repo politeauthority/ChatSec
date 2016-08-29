@@ -20,7 +20,7 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a class="page-scroll" href="#login">Login</a>
+                        <a id="login" class="page-scroll" href="#login">Login</a>
                     </li>                    
                     <li>
                         <a class="page-scroll" href="#about">About</a>
@@ -55,28 +55,45 @@
 
     <!-- Login Section -->
     <section id="login" class="container content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h2>Login</h2>   
-                <form action="/" method="POST" lpformnum="1" _lpchecked="1">
-                  <div class="form-group">
-                    <label for="user_name">User Name</label>
-                    <input type="text" class="form-control form-control-lg" name="user_name" id="user_name" aria-describedby="user_name_help" placeholder="Enter user name">
-                    <small id="user_name_help" class="form-text text-muted">We'll never share your information.</small>
-                  </div>
-                  <div class="form-group">
-                    <label for="room_name">Room Name</label>
-                    <input type="text" class="form-control form-control-lg" name="room_name" id="room_name" aria-describedby="room_name_help" placeholder="Enter the room name ">
-                  </div>  
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Room Password</label>
-                    <input type="password" class="form-control form-control-lg" name="password" id="exampleInputPassword1" placeholder="Password">
-                  </div>
 
-                  <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
+		<h2>Login</h2>
+		<div id="login-carousel" class="carousel slide">
+			<div id="cs_loign_user" class="carousel-inner">
+		    	<div class="item active">
+					<div id="form_user_name" class="form-group">
+						<h4><label for="user_name">User Name</label></h4>
+						<input type="text" class="cs_login form-control form-control-lg" name="user_name" id="user_name" aria-describedby="user_name_help" value="{%if session['user_name']%}{{session['user_name']}}{%endif%}" placeholder="Enter user name">
+						<small id="user_name_help" class="form-text text-muted">We'll never share your information.</small>
+						<!-- <br> -->
+						<!-- <div class="form-group"> -->
+							<!-- <button class="btn-next btn btn-primary">>></button> -->
+						<!-- </div> -->
+					</div>
+		    </div>
+		    <div id="cs_loign_room" class="item">
+				<div id="form_room_name" class="form-group">
+                    <h4><label for="room_name">Room</label></h4>
+                    <input type="text" class="cs_login form-control form-control-lg" name="room_name" id="room_name" aria-describedby="room_name_help" placeholder="Enter the room name ">
+				</div>  		    
+		    </div>
+		    <div id="cs_loign_pass" class="item">
+              <div id="form_password" class="form-group">
+                <label for="exampleInputPassword1">Room Password</label>
+                <input type="password" class="cs_login form-control form-control-lg" name="password" id="exampleInputPassword1" placeholder="Password">
+              </div>
+			</div>
+					
+
+
+		  </div><!-- /.carousel-inner -->
+		  <!--  Next and Previous controls below
+		        href values must reference the id for this carousel -->
+<!-- 		    <a class="carousel-control left" href="#this-carousel-id" data-slide="prev">&lsaquo;</a>
+		    <a class="carousel-control right" href="#this-carousel-id" data-slide="next">&rsaquo;</a> -->
+		</div><!-- /.carousel -->
+
+
+
     </section>
 
     <!-- About Section -->
@@ -116,5 +133,44 @@
 {% block script %}
     <script type="text/javascript">
     	console.log('index.html');
+    	function set_login_creds(input){
+    		input_name = input.attr('name');
+    		Cookies.set(input_name, input.val());
+    		if(input_name == 'password'){
+				$('body').fadeOut();
+				window.location.href = "/auth";	
+				return;
+    		}
+    		$("#login-carousel").carousel("next");
+			if(input_name == 'user_name'){
+				console.log('xxxxxx')
+				$('#cs_loign_room').find('.cs_login').focus();
+			} else if (input_name == 'room_name'){
+				$('#cs_loign_pass').find('.cs_login').focus();
+			}
+    	}
+
+		$(document).ready(function(){
+			$('#login-carousel').carousel({
+				interval: false
+			});
+		});
+		$('#login').click(function(){
+  			var x = window.scrollX, y = window.scrollY;
+			$('#cs_loign_user').find('.cs_login').focus();			
+
+		  	window.scrollTo(x, y);
+  			return this; //chainability			
+		});
+		$('.btn-next').click(function(){
+			// console.log($(this).closest('.cs_login'));
+			set_login_creds($(this).closest('.cs_login'));
+		});
+        $('.cs_login').keypress(function(e) {
+            var code = e.keyCode || e.which;
+            if (code == 13) {
+            	set_login_creds($(this));
+            }
+		});		  
     </script>
 {% endblock %}    

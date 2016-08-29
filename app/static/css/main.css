@@ -28,6 +28,9 @@ html,body{
     padding-bottom: 10px;
     border-top: 1px solid #CCCCCC;
 }
+#chat .msg_me{
+    background-color: #1e252b;
+}
 #chat h3{
     font-size:17px;
     margin: 0;
@@ -35,6 +38,7 @@ html,body{
     padding-right: 8px;
 }
 #chat_window{
+    margin-top: 85px;
 }
 
 .chat_image{
@@ -54,7 +58,8 @@ html,body{
     padding-bottom:0 !important;
 }
 #text_box{
-    bottom:1px;
+    bottom:0px;
+    padding:5px;
     position: fixed;
     width:100%;
 }

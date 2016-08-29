@@ -22,7 +22,11 @@ $(function() {
         var $anchor = $(this);
         $('html, body').stop().animate({
             scrollTop: $($anchor.attr('href')).offset().top
-        }, 1500, 'easeInOutExpo');
+        }, 1500, 'easeInOutExpo', function(){
+            if($anchor.attr('id') == 'login_nav'){
+                $('#cs_loign_user').find('.cs_login').focus()
+            }
+        });
         event.preventDefault();
     });
 });

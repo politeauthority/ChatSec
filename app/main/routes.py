@@ -7,13 +7,6 @@ import hashlib
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
-    """"Login form to enter a room."""
-    if len(request.form) > 0:
-        session['user_name'] = request.form['user_name']
-        session['user_key'] = gen_user_key(session['user_name'])
-        session['room_name'] = request.form['room_name']
-        session['password'] = request.form['password']
-        return redirect(url_for('.chat'))
     return render_template('index.html')
 
 
@@ -35,6 +28,14 @@ def chat():
     if data['user_name'] == '' or data['room_name'] == '':
         return redirect(url_for('.index'))
     return render_template('chat.html', **data)
+
+
+@main.route('/auth')
+def auth():
+    session['user_name'] = request.cookies['user_name']
+    session['user_key'] = gen_user_key(session['user_name'])
+    session['room_name'] = request.cookies['room_name']
+    return redirect(url_for('.chat'))    
 
 
 @main.route('/logout')

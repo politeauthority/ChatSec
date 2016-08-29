@@ -17,6 +17,7 @@ html,body{
 
 #chat{
     width: 100%;
+    height:80%;
     overflow-y: scroll;
     overflow-x: hidden;
 }

@@ -142,16 +142,29 @@ function pretty_time_now(msg_time){
     return msg_pretty_time;
 }
 
+function settings_update(){
+    $('.setting-update').click(function(){
+        setting_name = $(this).attr('name');
+        if(setting_name=='clear_local'){
+            localStorage.clear();
+        }
+        // console.log($(this).attr('name'));
+        // console.log($(this).attr('checked'));
+        // $(this).attr
+
+    });
+}
+
 var CHATSEC = CHATSEC || (function(){
     var _args = {}; // private
 
     return {
         init : function(Args) {
             _args = Args;
-            Cookies.set('user_name', _args[0]);
-            Cookies.set('password', _args[1]);
-            Cookies.set('avatar', _args[2]);
-            Cookies.set('room_name', _args[3]);
+            // Cookies.set('user_name', _args[0]);
+            // Cookies.set('password', _args[1]);
+            // Cookies.set('avatar', _args[2]);
+            // Cookies.set('room_name', _args[3]);
 
             Notification.requestPermission().then(function(result) {
               console.log(result);
@@ -163,8 +176,8 @@ var CHATSEC = CHATSEC || (function(){
             $(document).ready(function(){
                 $('.typing').hide();
                 $("#text").focus();
-                build_local_data(Cookies.get('room_name'))
-                // $('#chat_window').hide();
+                build_local_data(Cookies.get('room_name'));
+
                 socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
                 
                 socket.on('connect', function() {

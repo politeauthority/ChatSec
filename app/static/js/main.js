@@ -91,15 +91,16 @@ function write_msg(msg_obj){
     new_msg_user = new_msg_li.attr('data-user');
 
     // check if the last message was the same person and recent
-    previous_message = $('#chat li:nth-last-child(3)');
-    previous_message_type = previous_message.attr('data-type');
+    previous_message_li = $('#chat li:nth-last-child(3)');
+    previous_message_type = previous_message_li.attr('data-type');
     append_to_last = false;
     if( 
-         previous_message.attr('data-user') == new_msg_user
+         previous_message_li.attr('data-user') == new_msg_user
         &&
         previous_message_type == 'msg')
         {
-        previous_message_time = new Date(previous_message.attr('data-date'));
+        new_msg_li.find('.user_image_container').find('img').hide();
+        previous_message_time = new Date(previous_message_li.attr('data-date'));
         diff = Math.round(Math.abs((new Date() - previous_message_time) / 1000));
         if(diff < 120){
             append_to_last = true;
@@ -112,11 +113,7 @@ function write_msg(msg_obj){
             new_msg_li.find('h3').hide();
             new_msg_li.find('.msg_date').hide();
             new_msg_li.addClass('no_break_above');
-            previous_message.addClass('no_break_below');
-            // new_msg_li.find('.user_image_container').hide()
-        } else {
-            // previous_message.removeClass('no_break');
-            // new_msg_li.addClass('no_break');
+            previous_message_li.addClass('no_break_below');
         }
     }
     msg_pretty_time = pretty_time_now(msg_obj.sent)
@@ -126,6 +123,7 @@ function write_msg(msg_obj){
 function pretty_time_now(msg_time){
     var now = new Date();
     diff = Math.round(Math.abs( now - msg_time) / 1000);
+
     msg_pretty_time = false;
     if(diff < 20){
         msg_pretty_time = 'seconds ago';
@@ -178,7 +176,7 @@ var CHATSEC = CHATSEC || (function(){
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
-                // Typing a message
+                // Reciving user currently typing 
                 socket.on('typing', function(data) {
                     if(Cookies.get('user_name') != data.username ){
                         $('.typing').find('.typing_avatar').attr(
@@ -212,6 +210,7 @@ var CHATSEC = CHATSEC || (function(){
                     if (code == 13) {
                         message = $('#text').val();
                         send_msg(message);
+                        $('#text').val('');
                     } else {
                         socket.emit('typing', {'msg': 'chatsec-user-typing'});
                     }

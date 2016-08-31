@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>ChatSec: {{ room }}</title>
+        <title>{% block title %}{% endblock %}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">      
         {%if config['USE_CDN'] %}        
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" media="screen">
@@ -12,6 +12,11 @@
         <link href="/static/css/main.css" rel="stylesheet" media="screen">
         <link href="/static/css/grayscale.css" rel="stylesheet" media="screen">
         <link href="/static/imgs/favicon.ico" rel="icon" type="image/x-icon" />
+        
+        <!-- Custom Fonts -->
+        <link href="/static/vendor/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">      
     </head>
     <body>
 

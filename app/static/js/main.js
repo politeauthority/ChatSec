@@ -165,7 +165,7 @@ var CHATSEC = CHATSEC || (function(){
                 $("#text").focus();
                 build_local_data(Cookies.get('room_name'))
                 // $('#chat_window').hide();
-                socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+                socket = io.connect('https://' + document.domain + ':' + location.port + '/chat');
                 
                 socket.on('connect', function() {
                     socket.emit('joined', {});

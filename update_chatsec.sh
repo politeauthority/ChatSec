@@ -1,0 +1,1 @@
+docker exec -it chatsec git --git-dir=/app/.git pull origin master

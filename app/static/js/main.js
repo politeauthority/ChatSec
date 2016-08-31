@@ -137,7 +137,7 @@ function pretty_time_now(msg_time){
             msg_pretty_time = minutes + ' mintues ago';
         }
     } else {
-        msg_pretty_time = false;
+        msg_pretty_time = 'just now';
     }
     return msg_pretty_time;
 }

@@ -177,7 +177,10 @@ var CHATSEC = CHATSEC || (function(){
                 $('.typing').hide();
                 $("#text").focus();
                 build_local_data(Cookies.get('room_name'));
-                socket = io.connect('https://' + document.domain + ':' + location.port + '/chat');
+                if (window.location.protocol == "https:"){
+
+                }
+                socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
                 
                 socket.on('connect', function() {
                     socket.emit('joined', {});

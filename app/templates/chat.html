@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block title%}ChatSec: {{room_name}}{%endblock%}
+{% block title%}ChatSec: {{room_key}}{%endblock%}
 {% block content %}
     <!-- Navigation -->
     <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
@@ -12,7 +12,7 @@
                     <i id="lock_status" class="fa fa-unlock-alt"></i> <span class="light">Chat</span>Sec
                 </a>
                <a class="navbar-brand page-scroll" href="#">
-                    <span class="light">::{{room_name}}</span>
+                    <span id="room_name" class="light"></span>
                 </a>                
             </div>
 
@@ -148,8 +148,7 @@
 
     <script type="text/javascript">
         settings_update();
-        CHATSEC.init(["{{user_name}}", "{{password}}", "{{avatar}}", "{{room_name}}"]);
-        // $('#chat_window').height($(window).height()-250);
+        CHATSEC.init();
         $(document).ready(function(){
             CHATSEC.launch();
         });

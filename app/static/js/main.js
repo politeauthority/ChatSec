@@ -58,11 +58,11 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 function store_message(data){
     data_string = (JSON.stringify(data));
-    room_key = 'room_' + data.room_name;
+    room_key = 'room_' + data.room_key;
 
-    chat_room_data = JSON.parse(localStorage.getItem(room_key));
-    chat_room_data.push(data_string);
-    localStorage.setItem(room_key, JSON.stringify(chat_room_data));
+    // chat_room_data = JSON.parse(localStorage.getItem(room_key));
+    // chat_room_data.push(data_string);
+    // localStorage.setItem(room_key, JSON.stringify(chat_room_data));
 }
 
 function build_local_data(room_name){
@@ -180,8 +180,10 @@ var CHATSEC = CHATSEC || (function(){
         init : function(Args) {
             _args = Args;
 
+            $('#room_name').html(':: ' + Cookies.set('room_name'));
+            
             Notification.requestPermission().then(function(result) {
-              console.log(result);
+                console.log(result);
             });
 
         },

@@ -8,38 +8,35 @@ from datetime import datetime
 def joined(message):
     """Sent by clients when they enter a room.
     A status message is broadcast to all people in the room."""
-    print '\n EVENT:   JOINED\n'
-    room_name = session.get('room_name')
-    join_room(room_name)
+    room_key = session.get('room_key')
+    join_room(room_key)
     data = {
         'msg': '@%s joined the room.' % session.get('user_name'),
         'user_name': session.get('user_name'),
         'avatar': session.get('avatar'),
         'sent': str(datetime.now()),
         'data_type': 'joined',
-        'room_name': room_name
+        'room_key': room_key
     }
     data['tpl'] = render_template('msg.html', **data)
-    emit('status', data, room=room_name)
+    emit('status', data, room=room_key)
 
 
 @socketio.on('text', namespace='/chat')
 def msg(message):
     """Sent by a client when the user entered a new message.
     The message is sent to all people in the room."""
-    print '\n EVENT:   MSG\n'
-    room_name = session.get('room_name')
+    room_key = session.get('room_key')
     data = {
         'msg': message['msg'],
         'user_name': session.get('user_name'),
         'avatar': session.get('avatar'),
         'sent': str(datetime.now()),
-        'room_name': session.get('room_name'),
+        'room_key': session.get('room_key'),
         'data_type': 'msg'
     }
     data['tpl'] = render_template('msg.html', **data)
-    print data
-    emit('message', data, room=room_name)
+    emit('message', data, room=room_key)
 
 
 @socketio.on('typing', namespace='/chat')
@@ -57,10 +54,8 @@ def typing(message):
 def left(message):
     """Sent by clients when they leave a room.
     A status message is broadcast to all people in the room."""
-    print '\n EVENT:   LEAVE\n'
-    print message
-    room_name = session.get('room_name')
-    leave_room(room_name)
+    room_key = session.get('room_key')
+    leave_room(room_key)
     msg_info = {
         'msg': message['message'],
         'user': session.get('user_name'),
@@ -69,6 +64,6 @@ def left(message):
     msg_info['tpl'] = render_template('msg.html', **msg_info)
     emit('status',
          {'msg': session.get('user_name') + ' has left the room.'},
-         room=room_name)
+         room=room_key)
 
 # End File: app/main/events.py

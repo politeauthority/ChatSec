@@ -117,7 +117,10 @@ function write_msg(msg_obj){
         }
     }
     msg_pretty_time = pretty_time_now(msg_obj.sent)
-    new_msg_li.find('.msg_date').text(msg_pretty_time);    
+    new_msg_li.find('.msg_date').text(msg_pretty_time);
+    if(Cookies.get('user_name')==new_msg_user){
+        new_msg_li.addClass('msg_me')
+    }
 }
 
 function pretty_time_now(msg_time){
@@ -148,10 +151,6 @@ function settings_update(){
         if(setting_name=='clear_local'){
             localStorage.clear();
         }
-        // console.log($(this).attr('name'));
-        // console.log($(this).attr('checked'));
-        // $(this).attr
-
     });
 }
 
@@ -161,10 +160,6 @@ var CHATSEC = CHATSEC || (function(){
     return {
         init : function(Args) {
             _args = Args;
-            // Cookies.set('user_name', _args[0]);
-            // Cookies.set('password', _args[1]);
-            // Cookies.set('avatar', _args[2]);
-            // Cookies.set('room_name', _args[3]);
 
             Notification.requestPermission().then(function(result) {
               console.log(result);

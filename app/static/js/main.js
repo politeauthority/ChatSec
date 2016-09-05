@@ -158,10 +158,14 @@ function lock_console(){
     console.log('hey were gonna lock this');
     $('#settings_btn').fadeOut();
     $('#chat_window').fadeOut();
-    $('#repassword_container').fadeIn();
-    // Cookies.set('password', null);
+    $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
 
-    // $('nav').hide();
+    $('#repassword_container').fadeIn(1500);
+    Cookies.set('password', null); 
+}
+
+function unlock_console(){
+
 }
 
 var CHATSEC = CHATSEC || (function(){
@@ -179,9 +183,9 @@ var CHATSEC = CHATSEC || (function(){
         launch : function(){
             if(Cookies.get('password') == null){
                 console.log(Cookies.get('password'));
-
                 window.location = '/';
             }
+
             $(document).ready(function(){
                 $('.typing').hide();
                 $("#textbox").focus();
@@ -189,7 +193,7 @@ var CHATSEC = CHATSEC || (function(){
 
                 var timeoutTime = 3000;
                 var timeoutTimer = setTimeout(lock_console, timeoutTime);
-                $('body').bind('mousedown keydown', function(event) {
+                $('body').bind('mousedown mousemove keydown', function(event) {
                     clearTimeout(timeoutTimer);
                     console.log('reset');
                     timeoutTimer = setTimeout(lock_console, timeoutTime);

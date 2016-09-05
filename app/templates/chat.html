@@ -9,7 +9,7 @@
                     Menu <i class="fa fa-bars"></i>
                 </button>
                 <a class="navbar-brand page-scroll" href="/">
-                    <i class="fa fa-unlock-alt"></i> <span class="light">Chat</span>Sec
+                    <i id="lock_status" class="fa fa-unlock-alt"></i> <span class="light">Chat</span>Sec
                 </a>
                <a class="navbar-brand page-scroll" href="#">
                     <span class="light">::{{room_name}}</span>
@@ -31,15 +31,12 @@
                     </li>
                 </ul>
             </div>
-            <!-- /.navbar-collapse -->
         </div>
-        <!-- /.container -->
     </nav>
 
     <section id="chat_window" class="container-fluid">
         <div class="row">
-
-                   
+            <!-- Chat Users # Non existant functionality currently :/ -->
             <div class="col-xs-12 col-md-3 hidden-sm hidden-xs">
                 <!--
                 <h3>Users</h3>
@@ -66,10 +63,10 @@
                             </span>                            
                         </div>
                     </li>
-                  
                 </ul>
             </div>
         </div>
+
         <!-- Chat TextBox -->        
         <div id="text_box" class="row">
             <div class="col-md-8 hidden-sm hidden-xs form-group form-group-lg">
@@ -88,29 +85,18 @@
         </div>        
     </section>        
     
-
     <section id="repassword_container">
-        <div class="container container-table" style="display:none">
+        <div class="container container-table">
             <div class="row vertical-center-row">
-                <div class="text-center col-md-4 col-md-offset-4" style="background:red">TEXT</div>
-            </div>
-        </div>    
-        <!-- Chat TextBox -->        
-<!--         <div class="row">
-            <div class="col-md-8 hidden-sm hidden-xs form-group form-group-lg">
-                <label class="col-sm-1 control-label" for="formGroupInputLarge">
-                    <img height="50" width="50" src="/static/imgs/avatars/white/{{avatar}}">
-                </label>
-            </div>
-            <div class="col-xs-12">
-                <div class="input-group">
-                    <input id="" class="form-control" type="text" id="formGroupInputLarge" placeholder="Type type type"></textarea>
-                    <div class="input-group-addon">
-                        <button id="send" class="btn btn-primary">Send</button>
+                <div class="text-center col-md-6 col-md-offset-3">
+                    <div id="form_password" class="form-group">
+                        <label for="repassword">Your session has been locked.</label>
+                        <input type="password" class="cs_login form-control form-control-lg" name="password" id="repassword" placeholder="Password">
+                        <small id="repassword_help" class="form-text text-muted">Your session is still active, but your password is required decrypt the content.</small>
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
         <!-- <a href="#" onclick="leave_room();">Leave this room</a> -->
     </section>
 

@@ -119,7 +119,7 @@ function write_msg(msg_obj){
     msg_pretty_time = pretty_time_now(msg_obj.sent)
     new_msg_li.find('.msg_date').text(msg_pretty_time);
     if(Cookies.get('user_name')==new_msg_user){
-        new_msg_li.addClass('msg_me')
+        new_msg_li.addClass('msg_me');
     }
 }
 
@@ -154,6 +154,17 @@ function settings_update(){
     });
 }
 
+function lock_console(){
+    console.log('hey were gonna lock this');
+    $('#settings_btn').fadeOut();
+    // $('#chat_window').fadeOut();
+    // $('#text_container').fadeOut();
+    // $('#repassword_container').fadeIn();
+    Cookies.set('password', null);
+
+    // $('nav').hide();
+}
+
 var CHATSEC = CHATSEC || (function(){
     var _args = {}; // private
 
@@ -167,14 +178,25 @@ var CHATSEC = CHATSEC || (function(){
 
         },
         launch : function(){
+            if(Cookies.get('password') == null){
+                console.log(Cookies.get('password'));
 
+                window.location = '/';
+            }
             $(document).ready(function(){
                 $('.typing').hide();
-                $("#text").focus();
+                $("#textbox").focus();
                 build_local_data(Cookies.get('room_name'));
-                if (window.location.protocol == "https:"){
 
-                }
+                var timeoutTime = 3000;
+                var timeoutTimer = setTimeout(lock_console, timeoutTime);
+                $('body').bind('mousedown keydown', function(event) {
+                    clearTimeout(timeoutTimer);
+                    console.log('reset');
+                    timeoutTimer = setTimeout(lock_console, timeoutTime);
+                    // timeoutTime = 9000;
+                });
+
                 socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
                 
                 socket.on('connect', function() {
@@ -193,7 +215,7 @@ var CHATSEC = CHATSEC || (function(){
                             'src',
                             '/static/imgs/avatars/white/' + data.avatar
                         );
-                        $('.typing').find('h3').text(data.username)
+                        $('.typing').find('h3').text(data.username);
                         $('.typing').show().delay(750).fadeOut();
                         $('#chat').scrollTop($('#chat')[0].scrollHeight);
                     }
@@ -215,19 +237,19 @@ var CHATSEC = CHATSEC || (function(){
                 });
 
                 // Sending a message
-                $('#text').keypress(function(e) {
+                $('#textbox').keypress(function(e) {
                     var code = e.keyCode || e.which;
                     if (code == 13) {
-                        message = $('#text').val();
+                        message = $('#textbox').val();
                         send_msg(message);
-                        $('#text').val('');
+                        $('#textbox').val('');
                     } else {
                         socket.emit('typing', {'msg': 'chatsec-user-typing'});
                     }
                 });
 
                 $('#send').click(function(e){
-                    send_msg($('#text').val());
+                    send_msg($('#textbox').val());
                 });
 
                 // @todo: make this work across the socket and hit all clients

@@ -9,7 +9,7 @@
                     Menu <i class="fa fa-bars"></i>
                 </button>
                 <a class="navbar-brand page-scroll" href="/">
-                    <i class="fa fa-play-circle"></i> <span class="light">Chat</span>Sec
+                    <i class="fa fa-unlock-alt"></i> <span class="light">Chat</span>Sec
                 </a>
                <a class="navbar-brand page-scroll" href="#">
                     <span class="light">::{{room_name}}</span>
@@ -24,10 +24,10 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a class="" data-toggle="modal" data-target="#settings_modal" href="#login">Settings</a>
+                        <a id="settings_btn" data-toggle="modal" data-target="#settings_modal" href="#">Settings</a>
                     </li>                    
                     <li>
-                        <a class="page-scroll" href="/logout">Logout</a>
+                        <a href="/logout">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -36,7 +36,7 @@
         <!-- /.container -->
     </nav>
 
-    <section id="chat_window" class="container-fluid">
+    <section id="chat_window" class="container-fluid hide">
 
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2">
@@ -81,7 +81,7 @@
             </div>
         </div>
     </section>        
-    <section>
+    <section id="text_container" class="hide">
         <!-- Chat TextBox -->        
         <div id="text_box" class="row">
             <div class="col-md-8 hidden-sm hidden-xs form-group form-group-lg">
@@ -91,13 +91,38 @@
             </div>
             <div class="col-xs-12">
                 <div class="input-group">
-                    <textarea id="text" class="form-control" type="text" id="formGroupInputLarge" placeholder="Type type type"></textarea>
+                    <textarea id="textbox" class="form-control" type="text" id="formGroupInputLarge" placeholder="Type type type"></textarea>
                     <div class="input-group-addon">
                         <button id="send" class="btn btn-primary">Send</button>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- <a href="#" onclick="leave_room();">Leave this room</a> -->
+    </section>
+
+    <section id="repassword_container">
+        <div class="container container-table" style="display:none">
+            <div class="row vertical-center-row">
+                <div class="text-center col-md-4 col-md-offset-4" style="background:red">TEXT</div>
+            </div>
+        </div>    
+        <!-- Chat TextBox -->        
+<!--         <div class="row">
+            <div class="col-md-8 hidden-sm hidden-xs form-group form-group-lg">
+                <label class="col-sm-1 control-label" for="formGroupInputLarge">
+                    <img height="50" width="50" src="/static/imgs/avatars/white/{{avatar}}">
+                </label>
+            </div>
+            <div class="col-xs-12">
+                <div class="input-group">
+                    <input id="" class="form-control" type="text" id="formGroupInputLarge" placeholder="Type type type"></textarea>
+                    <div class="input-group-addon">
+                        <button id="send" class="btn btn-primary">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
         <!-- <a href="#" onclick="leave_room();">Leave this room</a> -->
     </section>
 

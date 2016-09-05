@@ -1,5 +1,3 @@
-var socket;
-
 function leave_room(){
     socket.emit('left', {}, function() {
         socket.disconnect();
@@ -159,17 +157,24 @@ function lock_console(){
     $('#settings_btn').fadeOut();
     $('#chat_window').fadeOut();
     $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
-
     $('#repassword_container').fadeIn(1500);
-    Cookies.set('password', null); 
+    Cookies.set('password', null);
 }
 
-function unlock_console(){
-
+function unlock_console(password){
+    console.log('lets open this bitch');
+    console.log(password);
+    Cookies.set('password', password);
+    console.log(Cookies.get('room_name'));
+    console.log(Cookies.get('password'));
+    build_local_data(Cookies.get('room_name'));
+    $('#repassword_container').fadeOut(1500);
+    $('#settings_btn').fadeIn();
+    $('#chat_window').fadeIn();
 }
 
+var socket;
 var CHATSEC = CHATSEC || (function(){
-    var _args = {}; // private
 
     return {
         init : function(Args) {
@@ -191,15 +196,21 @@ var CHATSEC = CHATSEC || (function(){
                 $("#textbox").focus();
                 build_local_data(Cookies.get('room_name'));
 
-                var timeoutTime = 3000;
+                // lockout
+                var timeoutTime = 300000;
                 var timeoutTimer = setTimeout(lock_console, timeoutTime);
                 $('body').bind('mousedown mousemove keydown', function(event) {
-                    clearTimeout(timeoutTimer);
-                    console.log('reset');
                     timeoutTimer = setTimeout(lock_console, timeoutTime);
-                    // timeoutTime = 9000;
                 });
+                $('.cs_login').keypress(function(e) {
+                    var code = e.keyCode || e.which;
+                    if (code == 13) {
+                        unlock_console($(this).val());
+                        // set_login_creds($(this));
+                    }
+                });                 
 
+                // Sockets
                 socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
                 
                 socket.on('connect', function() {
@@ -255,15 +266,7 @@ var CHATSEC = CHATSEC || (function(){
                     send_msg($('#textbox').val());
                 });
 
-                // @todo: make this work across the socket and hit all clients
-                $('#clear_msgs').click(function(e){
-                    $('#chat li').each(function(){
-                        if(!$(this).hasClass('typing')){
-                            $(this).remove();
-                        }
-                    });
-                });
-
+                // @todo: make t his actually work or kill it
                 $(window).on('beforeunload', function(){
                     socket.emit('left', {}, function() {
                         socket.disconnect();
@@ -280,7 +283,6 @@ var CHATSEC = CHATSEC || (function(){
                             $(this).find('.msg_date').text(msg_pretty_time);
                         }
                     });
-
                     // Highlight code blocks
                     $('pre').each(function(i, block) {
                         // hljs.highlightBlock(block);

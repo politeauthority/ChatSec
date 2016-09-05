@@ -157,10 +157,9 @@ function settings_update(){
 function lock_console(){
     console.log('hey were gonna lock this');
     $('#settings_btn').fadeOut();
-    // $('#chat_window').fadeOut();
-    // $('#text_container').fadeOut();
-    // $('#repassword_container').fadeIn();
-    Cookies.set('password', null);
+    $('#chat_window').fadeOut();
+    $('#repassword_container').fadeIn();
+    // Cookies.set('password', null);
 
     // $('nav').hide();
 }

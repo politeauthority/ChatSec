@@ -129,15 +129,14 @@
     <script src="/static/js/main.js"></script>
 
     <script type="text/javascript">
-    var passhash = CryptoJS.SHA1('yo bitch');
-    console.log(passhash);
-
     	function set_login_creds(input){
     		input_name = input.attr('name');
     		Cookies.set(input_name, input.val());
     		if(input_name == 'password'){
-                room_key = Aes.Ctr.encrypt(Cookies.get('room_name'), Cookies.get('password'), 256)
+                var room_key = CryptoJS.MD5(Cookies.get('room_name') + Cookies.get('password'));
+                room_key = room_key.toString(CryptoJS.enc.Base64);                
                 Cookies.set('room_key', room_key);
+                console.log(room_key);
 				$('body').fadeOut();
 				window.location.href = "/auth";	
 				return;

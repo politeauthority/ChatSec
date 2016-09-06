@@ -208,6 +208,7 @@ var CHATSEC = CHATSEC || (function(){
                     var code = e.keyCode || e.which;
                     if (code == 13) {
                         unlock_console($(this).val());
+                        $(this).val('');
                         // set_login_creds($(this));
                     }
                 });                 

@@ -1,8 +1,8 @@
 from flask import session, redirect, url_for, render_template, request
-from . import main
-import avatars
 from datetime import datetime
 import hashlib
+import avatars
+from . import main
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -19,13 +19,14 @@ def chat():
     data = {
         'user_name': session.get('user_name', ''),
         'avatar': session.get('avatar'),
-        'room_name': session.get('room_name', ''),
+        'room_key': session.get('room_key', ''),
+        # 'room_key': session.get(),
         'password': session.get('password', '')
     }
     print '\n'
     print session
     print ' '
-    if data['user_name'] == '' or data['room_name'] == '':
+    if data['user_name'] == '' or data['room_key'] == '':
         return redirect(url_for('.index'))
     return render_template('chat.html', **data)
 
@@ -34,7 +35,7 @@ def chat():
 def auth():
     session['user_name'] = request.cookies['user_name']
     session['user_key'] = gen_user_key(session['user_name'])
-    session['room_name'] = request.cookies['room_name']
+    session['room_key'] = request.cookies['room_key']
     return redirect(url_for('.chat'))
 
 
@@ -42,7 +43,8 @@ def auth():
 def logout():
     session.pop('user_name')
     session.pop('user_key')
-    session.pop('room_name')
+    session.pop('room_key')
+    session.pop('avatar')
     return redirect(url_for('.index'))
 
 

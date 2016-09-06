@@ -59,10 +59,13 @@ function spawnNotification(theBody,theIcon,theTitle) {
 function store_message(data){
     data_string = (JSON.stringify(data));
     room_key = 'room_' + data.room_key;
-
-    // chat_room_data = JSON.parse(localStorage.getItem(room_key));
-    // chat_room_data.push(data_string);
-    // localStorage.setItem(room_key, JSON.stringify(chat_room_data));
+    console.log(data.room_key);
+    chat_room_data = JSON.parse(localStorage.getItem(room_key));
+    if(chat_room_data==null){
+        chat_room_data = [];
+    }
+    chat_room_data.push(data_string);
+    localStorage.setItem(room_key, JSON.stringify(chat_room_data));
 }
 
 function build_local_data(room_name){
@@ -251,6 +254,7 @@ var CHATSEC = CHATSEC || (function(){
                             'ChatSec - ' + data.user_name );
                     }
                     store_message(data);
+                    console.log('here');
                 });
 
                 // Sending a message

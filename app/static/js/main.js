@@ -69,7 +69,6 @@ function store_message(data){
 
 function build_local_data(room_name){
     room_key = 'room_' + room_name;
-    // localStorage.setItem(room_key, '[]');
     chat_room_data = JSON.parse(localStorage.getItem(room_key));
     if(chat_room_data == null){
         empty_array = [];
@@ -158,6 +157,7 @@ function lock_console(){
     $('#settings_btn').fadeOut();
     $('#chat_window').fadeOut();
     $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
+    $('#repassword_container').focus();
     $('#repassword_container').fadeIn(1500);
     Cookies.set('password', '');
     Cookies.set('terminal', 'locked');
@@ -179,120 +179,113 @@ var CHATSEC = CHATSEC || (function(){
     return {
         init : function(Args) {
             _args = Args;
-
+            build_local_data(Cookies.get('room_name'));
             $('#room_name').html(':: ' + Cookies.set('room_name'));
-            
+            if(Cookies.get('password')==''){
+                window.location = '/';
+            }            
             Notification.requestPermission().then(function(result) {
                 console.log(result);
             });
 
         },
         launch : function(){
-            console.log('check to see if they have a password');
-            if(Cookies.get('password')==''){
-                window.location = '/';
-            }
+            $('.typing').hide();
+            $("#textbox").focus();
 
-            $(document).ready(function(){
-                $('.typing').hide();
-                $("#textbox").focus();
-                build_local_data(Cookies.get('room_name'));
 
-                // lockout
-                var timeoutTime = 300000;
-                var timeoutTimer = setTimeout(lock_console, timeoutTime);
-                $('body').bind('mousedown mousemove keydown', function(event) {
-                    timeoutTimer = setTimeout(lock_console, timeoutTime);
-                });
-                $('.cs_login').keypress(function(e) {
-                    var code = e.keyCode || e.which;
-                    if (code == 13) {
-                        unlock_console($(this).val());
-                        $(this).val('');
-                        // set_login_creds($(this));
-                    }
-                });                 
-
-                // Sockets
-                socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
-                
-                socket.on('connect', function() {
-                    socket.emit('joined', {});
-                });
-                
-                socket.on('status', function(data) {
-                    $(data.tpl).insertBefore('#chat li:last');
-                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                });
-
-                // Reciving user currently typing 
-                socket.on('typing', function(data) {
-                    if(Cookies.get('user_name') != data.username ){
-                        $('.typing').find('.typing_avatar').attr(
-                            'src',
-                            '/static/imgs/avatars/black/' + data.avatar
-                        );
-                        $('.typing').find('h3').text(data.username);
-                        $('.typing').show().delay(750).fadeOut();
-                        $('#chat').scrollTop($('#chat')[0].scrollHeight);
-                    }
-                });
-
-                // Recieving a message
-                socket.on('message', function(data) {
-                    write_msg(data);
-
-                    if(Cookies.get('user_name') != data.user_name ){
-                        var audio = new Audio('/static/audio/new_msg.mp3');
-                        audio.play();
-                        spawnNotification(
-                            filtered_msg, 
-                            'http://www.google.com/', 
-                            'ChatSec - ' + data.user_name );
-                    }
-                    store_message(data);
-                    console.log('here');
-                });
-
-                // Sending a message
-                $('#textbox').keypress(function(e) {
-                    var code = e.keyCode || e.which;
-                    if (code == 13) {
-                        message = $('#textbox').val();
-                        send_msg(message);
-                        $('#textbox').val('');
-                    } else {
-                        socket.emit('typing', {'msg': 'chatsec-user-typing'});
-                    }
-                });
-
-                $('#send').click(function(e){
-                    send_msg($('#textbox').val());
-                });
-
-                // @todo: make t his actually work or kill it
-                $(window).on('beforeunload', function(){
-                    socket.emit('left', {}, function() {
-                        socket.disconnect();
-                    });                
-                });
-
-                // Timer Scripts
-                window.setInterval(function(){
-                    // Update msg time
-                    $("#chat li").each(function( index ) {
-                        var sent_time = new Date( $(this).attr('data-date') );
-                        msg_pretty_time = pretty_time_now(sent_time)
-                        if(msg_pretty_time){
-                            $(this).find('.msg_date').text(msg_pretty_time);
-                        }
-                    });
-                    // Highlight code blocks
-                    $('pre').each(function(i, block) {
-                        // hljs.highlightBlock(block);
-                    });
-                }, 10000);
+            // lockout
+            var timeoutTime = 300000;
+            var timeoutTimer = setTimeout(lock_console, timeoutTime);
+            $('body').bind('mousedown mousemove keydown', function(event) {
+                timeoutTimer = setTimeout(lock_console, timeoutTime);
             });
+            $('.cs_login').keypress(function(e) {
+                var code = e.keyCode || e.which;
+                if (code == 13) {
+                    unlock_console($(this).val());
+                    $(this).val('');
+                }
+            });                 
+
+            // Sockets
+            socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
+            
+            socket.on('connect', function() {
+                socket.emit('joined', {});
+            });
+            
+            socket.on('status', function(data) {
+                $(data.tpl).insertBefore('#chat li:last');
+                $('#chat').scrollTop($('#chat')[0].scrollHeight);
+            });
+
+            // Reciving user currently typing 
+            socket.on('typing', function(data) {
+                if(Cookies.get('user_name') != data.user_name ){
+                    $('.typing').find('.typing_avatar').attr(
+                        'src',
+                        '/static/imgs/avatars/black/' + data.avatar
+                    );
+                    $('.typing').find('h3').text(data.user_name);
+                    $('.typing').show().delay(750).fadeOut();
+                    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+                }
+            });
+
+            // Recieving a message
+            socket.on('message', function(data) {
+                write_msg(data);
+
+                if(Cookies.get('user_name') != data.user_name ){
+                    var audio = new Audio('/static/audio/new_msg.mp3');
+                    audio.play();
+                    spawnNotification(
+                        filtered_msg, 
+                        'http://www.google.com/', 
+                        'ChatSec - ' + data.user_name );
+                }
+                store_message(data);
+            });
+
+            // Sending a message
+            $('#textbox').keypress(function(e) {
+                var code = e.keyCode || e.which;
+                if (code == 13) {
+                    message = $('#textbox').val();
+                    send_msg(message);
+                    $('#textbox').val('');
+                } else {
+                    socket.emit('typing', {'msg': 'chatsec-user-typing'});
+                }
+            });
+
+            $('#send').click(function(e){
+                send_msg($('#textbox').val());
+            });
+
+            // @todo: make t his actually work or kill it
+            $(window).on('beforeunload', function(){
+                socket.emit('left', {}, function() {
+                    socket.disconnect();
+                });                
+            });
+
+            // Timer Scripts
+            window.setInterval(function(){
+                // Update msg time
+                $("#chat li").each(function( index ) {
+                    var sent_time = new Date( $(this).attr('data-date') );
+                    msg_pretty_time = pretty_time_now(sent_time)
+                    if(msg_pretty_time){
+                        $(this).find('.msg_date').text(msg_pretty_time);
+                    }
+                });
+                // Highlight code blocks
+                $('pre').each(function(i, block) {
+                    // hljs.highlightBlock(block);
+                });
+            }, 10000);
         }
     };
 }());

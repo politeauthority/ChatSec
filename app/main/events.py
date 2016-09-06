@@ -57,7 +57,7 @@ def left(message):
     room_key = session.get('room_key')
     leave_room(room_key)
     msg_info = {
-        'msg': message['message'],
+        'msg': '',
         'user': session.get('user_name'),
         'date': str(datetime.now()),
     }

@@ -1,4 +1,6 @@
 from flask import session, redirect, url_for, render_template, request
+from datetime import datetime
+import hashlib
 import avatars
 from . import main
 

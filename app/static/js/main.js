@@ -59,7 +59,6 @@ function spawnNotification(theBody,theIcon,theTitle) {
 function store_message(data){
     data_string = (JSON.stringify(data));
     room_key = 'room_' + data.room_key;
-    console.log(data.room_key);
     chat_room_data = JSON.parse(localStorage.getItem(room_key));
     if(chat_room_data==null){
         chat_room_data = [];
@@ -156,24 +155,22 @@ function settings_update(){
 }
 
 function lock_console(){
-    console.log('hey were gonna lock this');
     $('#settings_btn').fadeOut();
     $('#chat_window').fadeOut();
     $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
     $('#repassword_container').fadeIn(1500);
-    Cookies.set('password', null);
+    Cookies.set('password', '');
+    Cookies.set('terminal', 'locked');
 }
 
 function unlock_console(password){
     console.log('lets open this bitch');
-    console.log(password);
     Cookies.set('password', password);
-    console.log(Cookies.get('room_name'));
-    console.log(Cookies.get('password'));
     build_local_data(Cookies.get('room_name'));
     $('#repassword_container').fadeOut(1500);
     $('#settings_btn').fadeIn();
     $('#chat_window').fadeIn();
+    Cookies.set('terminal', 'open');
 }
 
 var socket;
@@ -191,8 +188,8 @@ var CHATSEC = CHATSEC || (function(){
 
         },
         launch : function(){
-            if(Cookies.get('password') == null){
-                console.log(Cookies.get('password'));
+            console.log('check to see if they have a password');
+            if(Cookies.get('password')==''){
                 window.location = '/';
             }
 
@@ -233,7 +230,7 @@ var CHATSEC = CHATSEC || (function(){
                     if(Cookies.get('user_name') != data.username ){
                         $('.typing').find('.typing_avatar').attr(
                             'src',
-                            '/static/imgs/avatars/white/' + data.avatar
+                            '/static/imgs/avatars/black/' + data.avatar
                         );
                         $('.typing').find('h3').text(data.username);
                         $('.typing').show().delay(750).fadeOut();

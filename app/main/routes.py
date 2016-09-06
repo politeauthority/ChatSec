@@ -1,8 +1,6 @@
 from flask import session, redirect, url_for, render_template, request
-from . import main
 import avatars
-from datetime import datetime
-import hashlib
+from . import main
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -44,6 +42,7 @@ def logout():
     session.pop('user_name')
     session.pop('user_key')
     session.pop('room_key')
+    session.pop('avatar')
     return redirect(url_for('.index'))
 
 

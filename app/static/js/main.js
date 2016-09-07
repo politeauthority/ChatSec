@@ -155,6 +155,7 @@ function settings_update(){
 }
 
 function lock_console(){
+    console.log('locking');
     $('#settings_btn').fadeOut();
     $('#chat_window').fadeOut();
     $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
@@ -182,13 +183,12 @@ var CHATSEC = CHATSEC || (function(){
 
             $('#room_name').html(':: ' + Cookies.set('room_name'));
             
-            Notification.requestPermission().then(function(result) {
-                console.log(result);
-            });
+            // Notification.requestPermission().then(function(result) {
+            //     console.log(result);
+            // });
 
         },
         launch : function(){
-            console.log('check to see if they have a password');
             if(Cookies.get('password')==''){
                 window.location = '/';
             }
@@ -196,19 +196,22 @@ var CHATSEC = CHATSEC || (function(){
             $(document).ready(function(){
                 $('.typing').hide();
                 $("#textbox").focus();
+
+
+                $(document).bind("idle.idleTimer", function(){
+                 // function you want to fire when the user goes idle
+                    console.log('hey did it, he left!');
+                });
+
+
                 build_local_data(Cookies.get('room_name'));
 
-                // lockout
-                var timeoutTime = 300000;
-                var timeoutTimer = setTimeout(lock_console, timeoutTime);
-                $('body').bind('mousedown mousemove keydown', function(event) {
-                    timeoutTimer = setTimeout(lock_console, timeoutTime);
-                });
                 $('.cs_login').keypress(function(e) {
                     var code = e.keyCode || e.which;
                     if (code == 13) {
                         unlock_console($(this).val());
                         $(this).val('');
+                        timeoutTime = 0;
                         // set_login_creds($(this));
                     }
                 });                 
@@ -245,13 +248,12 @@ var CHATSEC = CHATSEC || (function(){
                     if(Cookies.get('user_name') != data.user_name ){
                         var audio = new Audio('/static/audio/new_msg.mp3');
                         audio.play();
-                        spawnNotification(
-                            filtered_msg, 
-                            'http://www.google.com/', 
-                            'ChatSec - ' + data.user_name );
+                        // spawnNotification(
+                        //     filtered_msg, 
+                        //     'http://www.google.com/', 
+                        //     'ChatSec - ' + data.user_name );
                     }
                     store_message(data);
-                    console.log('here');
                 });
 
                 // Sending a message
@@ -287,11 +289,12 @@ var CHATSEC = CHATSEC || (function(){
                             $(this).find('.msg_date').text(msg_pretty_time);
                         }
                     });
+
                     // Highlight code blocks
                     $('pre').each(function(i, block) {
                         // hljs.highlightBlock(block);
                     });
-                }, 10000);
+                }, 1000);
             });
         }
     };

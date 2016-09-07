@@ -36,21 +36,9 @@
 
     <section id="chat_window" class="container-fluid">
         <div class="row">
-            <!-- Chat Users # Non existant functionality currently :/ -->
-            <div class="col-xs-12 col-md-3 hidden-sm hidden-xs">
-                <!--
-                <h3>Users</h3>
-                <ul id="user_list">
-                    <li>
-                        <img class="user-image" src="/static/imgs/avatars/white/{{avatar}}">
-                        You
-                    </li>
-                </ul>
-                -->
-            </div>
 
             <!-- Chat Content -->
-            <div class="col-xs-12 col-md-8">
+            <div class="col-xs-12 col-sm-12 col-md-8">
                 <ul id="chat">
                     <li class="row typing" data-user="" data-date="">
                         <div class="col-sm-1 col-md-1 user_image">
@@ -69,12 +57,10 @@
 
         <!-- Chat TextBox -->        
         <div id="text_box" class="row">
-            <div class="col-md-8 hidden-sm hidden-xs form-group form-group-lg">
-                <label class="col-sm-1 control-label" for="formGroupInputLarge">
-                    <img height="50" width="50" src="/static/imgs/avatars/white/{{avatar}}">
-                </label>
+            <div class="col-md-2 hidden-sm hidden-xs form-group form-group-lg">
+                <img height="50" width="50" src="/static/imgs/avatars/white/{{avatar}}">
             </div>
-            <div class="col-xs-12">
+            <div class="col-xs-12 col-md-10" >
                 <div class="input-group">
                     <textarea id="textbox" class="form-control" type="text" id="formGroupInputLarge" placeholder="Type type type"></textarea>
                     <div class="input-group-addon">

@@ -41,10 +41,14 @@ def auth():
 
 @main.route('/logout')
 def logout():
-    session.pop('user_name')
-    session.pop('user_key')
-    session.pop('room_key')
-    session.pop('avatar')
+    if 'user_name' in session:
+        session.pop('user_name')
+    if 'user_key' in session:        
+        session.pop('user_key')
+    if 'room_key' in session:
+        session.pop('room_key')
+    if 'avatar' in session:
+        session.pop('avatar')
     return redirect(url_for('.index'))
 
 

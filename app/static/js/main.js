@@ -69,9 +69,6 @@ function store_message(data){
 
 function build_local_data(room_key){
     storage_key = 'room_' + room_key;
-    console.log('buiding data');
-
-    // localStorage.setItem(room_key, '[]');
     chat_room_data = JSON.parse(localStorage.getItem(storage_key));
     if(chat_room_data == null){
         empty_array = [];
@@ -139,13 +136,16 @@ function pretty_time_now(msg_time){
         msg_pretty_time = 'seconds ago';
     }else if(diff < 60){
         msg_pretty_time = 'less then a minute ago'
-    } else if(diff < 3600){
+    }else if(diff <= 5400){
         minutes = Math.round(diff / 60);
         if(minutes == 1){
             msg_pretty_time = '1 minute ago';
         } else {
             msg_pretty_time = minutes + ' mintues ago';
         }
+    }else if(diff > 5401){
+        hours = Math.round(diff / 3600)
+        msg_pretty_time = 'about '+hours+' hours ago';
     } else {
         msg_pretty_time = 'just now';
     }
@@ -167,8 +167,7 @@ function lock_console(){
     $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
     $('#repassword_container').fadeIn(1500);
     $("#repassword").focus();
-    console.log('hey were locking now');
-    $( "#chat li" ).each(function( index ) {
+    $( "#chat li" ).each(function(index) {
         if(! $(this).hasClass('typing')){
             $(this).remove();
         }
@@ -191,7 +190,7 @@ function unlock_console(password){
 
 function timerIncrement() {
     idleTime = idleTime + 1;
-    if (idleTime > 1) { // 20 seconds
+    if (idleTime >= 2) { // 120 seconds
         lock_console();
     }
 }
@@ -206,6 +205,7 @@ var CHATSEC = CHATSEC || (function(){
             _args = Args;
 
             $('#room_name').html(':: ' + Cookies.set('room_name'));
+            $('title').html('Chatsec::  ' + Cookies.set('room_name'));
             
             // Notification.requestPermission().then(function(result) {
             //     console.log(result);
@@ -226,7 +226,7 @@ var CHATSEC = CHATSEC || (function(){
                 $('#lock_btn').click(function(){
                     lock_console();
                 });
-                var idleInterval = setInterval(timerIncrement, 20000); // 20 seconds
+                var idleInterval = setInterval(timerIncrement, 60000); // 60 seconds
                 //Zero the idle timer on mouse movement.
                 $(this).mousemove(function (e) {
                     idleTime = 0;

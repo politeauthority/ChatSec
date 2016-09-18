@@ -58,37 +58,50 @@ function spawnNotification(theBody,theIcon,theTitle) {
 
 function store_message(data){
     data_string = (JSON.stringify(data));
-    room_key = 'room_' + data.room_key;
-    chat_room_data = JSON.parse(localStorage.getItem(room_key));
+    storage_key = 'room_' + data.room_key;
+    chat_room_data = JSON.parse(localStorage.getItem(storage_key));
     if(chat_room_data==null){
         chat_room_data = [];
     }
     chat_room_data.push(data_string);
-    localStorage.setItem(room_key, JSON.stringify(chat_room_data));
+    localStorage.setItem(storage_key, JSON.stringify(chat_room_data));
 }
 
-function build_local_data(room_name){
-    room_key = 'room_' + room_name;
+function build_local_data(room_key){
+    storage_key = 'room_' + room_key;
+    console.log('buiding data');
+
     // localStorage.setItem(room_key, '[]');
-    chat_room_data = JSON.parse(localStorage.getItem(room_key));
+    chat_room_data = JSON.parse(localStorage.getItem(storage_key));
     if(chat_room_data == null){
         empty_array = [];
-        localStorage.setItem(room_key, JSON.stringify(empty_array));
+        localStorage.setItem(storage_key, JSON.stringify(empty_array));
         return;
     }
     for(chat of chat_room_data){
         c = JSON.parse(chat);
-        write_msg(c);
+        draw_msg(c);
     }
 }
 
-function write_msg(msg_obj){
+function draw_msg(msg_obj){
     unencrypted_msg = Aes.Ctr.decrypt(msg_obj.msg, Cookies.get('password'), 256);    
     filtered_msg = filter_msg( unencrypted_msg );
     $(msg_obj.tpl).insertBefore('#chat li:last');
     new_msg_li = $('#chat li:nth-last-child(2)');
     new_msg_li.find('.msg_content').html(filtered_msg);
     new_msg_user = new_msg_li.attr('data-user');
+
+    
+    msg_pretty_time = pretty_time_now(msg_obj.sent)
+    new_msg_li.find('.msg_date').text(msg_pretty_time);
+    if(Cookies.get('user_name')==new_msg_user){
+        new_msg_li.addClass('msg_me');
+    }
+    $('#chat').scrollTop($('#chat')[0].scrollHeight);
+    if($('#chat li').length <= 1){
+        return
+    }
 
     // check if the last message was the same person and recent
     previous_message_li = $('#chat li:nth-last-child(3)');
@@ -107,19 +120,13 @@ function write_msg(msg_obj){
         }
     }
 
-    $('#chat').scrollTop($('#chat')[0].scrollHeight);
     if( previous_message_type == 'msg'){
-    if(append_to_last == true){
+        if(append_to_last == true){
             new_msg_li.find('h3').hide();
             new_msg_li.find('.msg_date').hide();
             new_msg_li.addClass('no_break_above');
             previous_message_li.addClass('no_break_below');
         }
-    }
-    msg_pretty_time = pretty_time_now(msg_obj.sent)
-    new_msg_li.find('.msg_date').text(msg_pretty_time);
-    if(Cookies.get('user_name')==new_msg_user){
-        new_msg_li.addClass('msg_me');
     }
 }
 
@@ -155,26 +162,43 @@ function settings_update(){
 }
 
 function lock_console(){
-    console.log('locking');
     $('#settings_btn').fadeOut();
     $('#chat_window').fadeOut();
     $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
     $('#repassword_container').fadeIn(1500);
+    $("#repassword").focus();
+    console.log('hey were locking now');
+    $( "#chat li" ).each(function( index ) {
+        if(! $(this).hasClass('typing')){
+            $(this).remove();
+        }
+    });    
     Cookies.set('password', '');
     Cookies.set('terminal', 'locked');
 }
 
 function unlock_console(password){
-    console.log('lets open this bitch');
     Cookies.set('password', password);
-    build_local_data(Cookies.get('room_name'));
+    Cookies.set('terminal', 'open');
+    build_local_data(Cookies.get('room_key'));
+    $('#lock_status').removeClass('fa-lock').addClass('fa-unlock-alt');    
     $('#repassword_container').fadeOut(1500);
     $('#settings_btn').fadeIn();
     $('#chat_window').fadeIn();
-    Cookies.set('terminal', 'open');
+    $("#textbox").focus();
+    $('#chat').scrollTop($('#chat')[0].scrollHeight);    
+}
+
+function timerIncrement() {
+    idleTime = idleTime + 1;
+    if (idleTime > 1) { // 20 seconds
+        lock_console();
+    }
 }
 
 var socket;
+var idleTime = 0;
+
 var CHATSEC = CHATSEC || (function(){
 
     return {
@@ -194,18 +218,22 @@ var CHATSEC = CHATSEC || (function(){
             }
 
             $(document).ready(function(){
-                $('.typing').hide();
+                build_local_data(Cookies.get('room_key'));                
+                $('.typing').hide();                
                 $("#textbox").focus();
 
-
-                $(document).bind("idle.idleTimer", function(){
-                 // function you want to fire when the user goes idle
-                    console.log('hey did it, he left!');
+                // Manual/Idle Lockout 
+                $('#lock_btn').click(function(){
+                    lock_console();
                 });
-
-
-                build_local_data(Cookies.get('room_name'));
-
+                var idleInterval = setInterval(timerIncrement, 20000); // 20 seconds
+                //Zero the idle timer on mouse movement.
+                $(this).mousemove(function (e) {
+                    idleTime = 0;
+                });
+                $(this).keypress(function (e) {
+                    idleTime = 0;
+                });
                 $('.cs_login').keypress(function(e) {
                     var code = e.keyCode || e.which;
                     if (code == 13) {
@@ -218,7 +246,6 @@ var CHATSEC = CHATSEC || (function(){
 
                 // Sockets
                 socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
-                
                 socket.on('connect', function() {
                     socket.emit('joined', {});
                 });
@@ -227,15 +254,16 @@ var CHATSEC = CHATSEC || (function(){
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
+                
 
                 // Reciving user currently typing 
                 socket.on('typing', function(data) {
-                    if(Cookies.get('user_name') != data.username ){
+                    if(Cookies.get('user_name') != data.user_name ){
                         $('.typing').find('.typing_avatar').attr(
                             'src',
                             '/static/imgs/avatars/black/' + data.avatar
                         );
-                        $('.typing').find('h3').text(data.username);
+                        $('.typing').find('h3').text(data.user_name);
                         $('.typing').show().delay(750).fadeOut();
                         $('#chat').scrollTop($('#chat')[0].scrollHeight);
                     }
@@ -243,7 +271,7 @@ var CHATSEC = CHATSEC || (function(){
 
                 // Recieving a message
                 socket.on('message', function(data) {
-                    write_msg(data);
+                    draw_msg(data);
 
                     if(Cookies.get('user_name') != data.user_name ){
                         var audio = new Audio('/static/audio/new_msg.mp3');

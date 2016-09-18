@@ -155,26 +155,35 @@ function settings_update(){
 }
 
 function lock_console(){
-    console.log('locking');
     $('#settings_btn').fadeOut();
     $('#chat_window').fadeOut();
     $('#lock_status').removeClass('fa-unlock-alt').addClass('fa-lock');
     $('#repassword_container').fadeIn(1500);
+    $("#repassword").focus();    
     Cookies.set('password', '');
     Cookies.set('terminal', 'locked');
 }
 
 function unlock_console(password){
-    console.log('lets open this bitch');
     Cookies.set('password', password);
     build_local_data(Cookies.get('room_name'));
     $('#repassword_container').fadeOut(1500);
     $('#settings_btn').fadeIn();
     $('#chat_window').fadeIn();
+    $("#textbox").focus();
     Cookies.set('terminal', 'open');
 }
 
 var socket;
+var idleTime = 0;
+
+function timerIncrement() {
+    idleTime = idleTime + 1;
+    if (idleTime > 1) { // 20 seconds
+        lock_console();
+    }
+}
+
 var CHATSEC = CHATSEC || (function(){
 
     return {
@@ -194,18 +203,20 @@ var CHATSEC = CHATSEC || (function(){
             }
 
             $(document).ready(function(){
-                $('.typing').hide();
+                build_local_data(Cookies.get('room_name'));                
+                $('.typing').hide();                
                 $("#textbox").focus();
 
-
-                $(document).bind("idle.idleTimer", function(){
-                 // function you want to fire when the user goes idle
-                    console.log('hey did it, he left!');
+                // Idle Lockout 
+                // var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+                var idleInterval = setInterval(timerIncrement, 20000); // 20 seconds
+                //Zero the idle timer on mouse movement.
+                $(this).mousemove(function (e) {
+                    idleTime = 0;
                 });
-
-
-                build_local_data(Cookies.get('room_name'));
-
+                $(this).keypress(function (e) {
+                    idleTime = 0;
+                });
                 $('.cs_login').keypress(function(e) {
                     var code = e.keyCode || e.which;
                     if (code == 13) {
@@ -218,7 +229,6 @@ var CHATSEC = CHATSEC || (function(){
 
                 // Sockets
                 socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
-                
                 socket.on('connect', function() {
                     socket.emit('joined', {});
                 });
@@ -227,15 +237,16 @@ var CHATSEC = CHATSEC || (function(){
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
+                
 
                 // Reciving user currently typing 
                 socket.on('typing', function(data) {
-                    if(Cookies.get('user_name') != data.username ){
+                    if(Cookies.get('user_name') != data.user_name ){
                         $('.typing').find('.typing_avatar').attr(
                             'src',
                             '/static/imgs/avatars/black/' + data.avatar
                         );
-                        $('.typing').find('h3').text(data.username);
+                        $('.typing').find('h3').text(data.user_name);
                         $('.typing').show().delay(750).fadeOut();
                         $('#chat').scrollTop($('#chat')[0].scrollHeight);
                     }

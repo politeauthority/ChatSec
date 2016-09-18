@@ -1,12 +1,25 @@
 from flask import session, redirect, url_for, render_template, request
+from flask_assets import Environment, Bundle
 from datetime import datetime
 import hashlib
 import avatars
-from . import main
+from . import app
+
+
+assets = Environment(app)
+
+js = Bundle('static/js/jquery.js', 'base.js', 'widgets.js',
+            filters='jsmin', output='gen/packed.js')
+assets.register('js_all', js)
 
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+
+    print ''
+    print ''
+    print ''
+    # return str(css_bundle)
     return render_template('index.html')
 
 

@@ -10,6 +10,10 @@ if os.getenv('CHATSEC_FLASK_ENV', False) == 'dev':
     DEBUG_TB_INTERCEPT_REDIRECTS = True
 else:
     DEBUG = False
+DEBUG = True
+COMPRESS_MIMETYPES = ['text/html', 'text/css', 'text/xml', 'application/json', 'application/javascript']
+COMPRESS_LEVEL = 6
+COMPRESS_MIN_SIZE = 500
 
 # Define the application directory
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -17,7 +21,7 @@ WEB_IP = '0.0.0.0'
 WEB_PORT = os.getenv('CHATSEC_FLASK_PORT', 5000)
 
 # Load jQuery and Twitter Bootstrap from local server or CDN
-USE_CDN = os.getenv('CHATSEC_USE_CDN', True)
+USE_CDN = os.getenv('CHATSEC_USE_CDN', False)
 
 # Application threads. A common general assumption is
 # using 2 per available processor cores - to handle

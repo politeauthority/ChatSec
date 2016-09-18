@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_debugtoolbar import DebugToolbarExtension
+from flask.ext.compressor import Compressor
 from flask.ext.socketio import SocketIO
 
 socketio = SocketIO()

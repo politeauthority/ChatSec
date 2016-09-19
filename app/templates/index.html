@@ -133,8 +133,6 @@
     		input_name = input.attr('name');
     		if(input_name == 'password'){
                 var password = CryptoJS.MD5(input.val());
-                console.log('nowww');
-                console.log(password)
                 var room_key = CryptoJS.MD5(Cookies.get('room_name') + password);
                 room_key = room_key.toString(CryptoJS.enc.Base64); 
                 Cookies.set('password', password);                
@@ -143,6 +141,7 @@
 				window.location.href = "/auth";
 				return;
     		}
+            Cookies.set(input_name, input.val());
     		$("#login-carousel").carousel("next");
 			if(input_name == 'user_name'){
 				$('#cs_loign_room').find('.cs_login').focus();

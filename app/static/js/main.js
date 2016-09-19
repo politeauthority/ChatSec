@@ -45,14 +45,22 @@ function filter_href(msg){
     return msg;
 }
 
-function spawnNotification(theBody,theIcon,theTitle) {
-    if( ! window.onfocus ){
-        var options = {
-          body: theBody,
-          icon: theIcon
-        }
-        var n = new Notification(theTitle,options);
-        setTimeout(n.close.bind(n), 5000);         
+function spawn_notification(msg_obj) {
+    if(window.Notification && Notification.permission !== "denied") {
+        Notification.requestPermission(function(status) {  // status is "granted", if accepted by user
+            if(Cookies.get('terminal')=='unlocked'){
+                title = 'ChatSec - ' + msg_obj.user_name;
+                msg = Aes.Ctr.decrypt(msg_obj.msg, Cookies.get('password'), 256);
+            } else {
+                title ='Chatsec';
+                msg = 'New message recieved.';
+            }
+            var n = new Notification('Title', { 
+                body: msg,
+                icon: 'static/imgs/avatars/black/' + msg_obj.avatar
+            });
+            setTimeout(n.close.bind(n), 5000);               
+        });
     }
 }
 
@@ -207,9 +215,10 @@ var CHATSEC = CHATSEC || (function(){
             $('#room_name').html(':: ' + Cookies.set('room_name'));
             $('title').html('Chatsec::  ' + Cookies.set('room_name'));
             
-            // Notification.requestPermission().then(function(result) {
-            //     console.log(result);
-            // });
+            window.Notification.requestPermission().then(function(result) {
+                Cookies.set('notifications', true);
+                console.log(result);
+            });
 
         },
         launch : function(){
@@ -276,10 +285,7 @@ var CHATSEC = CHATSEC || (function(){
                     if(Cookies.get('user_name') != data.user_name ){
                         var audio = new Audio('/static/audio/new_msg.mp3');
                         audio.play();
-                        // spawnNotification(
-                        //     filtered_msg, 
-                        //     'http://www.google.com/', 
-                        //     'ChatSec - ' + data.user_name );
+                        spawn_notification(data);
                     }
                     store_message(data);
                 });

@@ -12,20 +12,18 @@ def index():
 
 @main.route('/chat')
 def chat():
-    """Chat room. The user's name and room must be stored in
-    the session."""
+    """
+    Chat room. The user's name and room must be stored in
+    the session.
+    """
     if 'avatar' not in session:
         session['avatar'] = avatars.get_avatar()
     data = {
         'user_name': session.get('user_name', ''),
         'avatar': session.get('avatar'),
         'room_key': session.get('room_key', ''),
-        # 'room_key': session.get(),
         'password': session.get('password', '')
     }
-    print '\n'
-    print session
-    print ' '
     if data['user_name'] == '' or data['room_key'] == '':
         return redirect(url_for('.index'))
     return render_template('chat.html', **data)
@@ -41,10 +39,14 @@ def auth():
 
 @main.route('/logout')
 def logout():
-    session.pop('user_name')
-    session.pop('user_key')
-    session.pop('room_key')
-    session.pop('avatar')
+    if 'user_name' in session:
+        session.pop('user_name')
+    if 'user_key' in session:
+        session.pop('user_key')
+    if 'room_key' in session:
+        session.pop('room_key')
+    if 'avatar' in session:
+        session.pop('avatar')
     return redirect(url_for('.index'))
 
 

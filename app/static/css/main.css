@@ -57,11 +57,12 @@ html,body{
     border-top: 0 !important;
     line-height: .8;
 }
+
 .no_break_below {
     margin-bottom:0 !important;
     padding-bottom:0 !important;
-  
 }
+
 #text_box{
     bottom:0px;
     padding:5px;

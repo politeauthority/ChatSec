@@ -13,14 +13,11 @@ RUN apt-get update && \
         python-dev \
         python-pip \
         gunicorn \
-        nano \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN git clone https://github.com/politeauthority/ChatSec.git /chatsec
-
-
 RUN pip install -r /chatsec/resources/requirements.txt
 RUN cd /chatsec/
 
-CMD tail -f /dev/null
+CMD gunicorn --debug --worker-class eventlet --chdir /chatsec/ chat:app

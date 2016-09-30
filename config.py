@@ -1,15 +1,13 @@
 import os
 
-# APP CODE
-TRACKING_CODE_FRONTEND = ''  # 'UA-64687340-1'
-TRACKING_CODE_ADMIN = ''     # 'UA-64687340-2'
-
 # Statements for enabling the development environment
-if os.getenv('CHATSEC_FLASK_ENV', False) == 'dev':
+if os.getenv('CHATSEC_ENV', False) == 'dev':
     DEBUG = True
     DEBUG_TB_INTERCEPT_REDIRECTS = True
-else:
+    ANALYTICS = False
+elif os.getenv('CHATSEC_ENV', False) == 'production':
     DEBUG = False
+    ANALYTICS = True
 
 # Define the application directory
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -30,7 +28,7 @@ CSRF_ENABLED = True
 
 # Use a secure, unique and absolutely secret key for
 # signing the data.
-CSRF_SESSION_KEY = os.getenv('FLASK_CSRF_SESSION_KEY', '5eb63bbbe01eeed093cb22bb8f5acdc3')
+CSRF_SESSION_KEY = os.getenv('CHATSEC_FLASK_CSRF_SESSION_KEY', '5eb63bbbe01eeed093cb22bb8f5acdc3')
 
 # Secret key for signing cookies
-SECRET_KEY = os.getenv('FLASK_SECRET_KEY', '19f91a5069328a8ee6cdfc0e60894f90')
+SECRET_KEY = os.getenv('CHATSEC_FLASK_SECRET_KEY', '19f91a5069328a8ee6cdfc0e60894f90')

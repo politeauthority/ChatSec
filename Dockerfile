@@ -17,9 +17,8 @@ RUN apt-get update && \
             && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN mkdir /app
-RUN git clone https://github.com/politeauthority/ChatSec.git app/
+RUN git clone https://github.com/politeauthority/ChatSec.git chatsec/
 
-RUN pip install -r /app/requirements.txt
+RUN pip install -r /chatsec/requirements.txt
 
-CMD python /app/chat.py
+CMD python /chatsec/chat.py

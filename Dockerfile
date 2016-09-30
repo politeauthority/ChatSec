@@ -12,13 +12,13 @@ RUN apt-get update && \
         libpq-dev \
         python \
         python-dev \
-        python-mysqldb \
         python-pip \
-            && \
+        apache2 \
+        libapache2-mod-wsgi \
+        && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN git clone https://github.com/politeauthority/ChatSec.git chatsec/
-
-RUN pip install -r /chatsec/requirements.txt
-
-CMD python /chatsec/chat.py
+RUN git clone https://github.com/politeauthority/ChatSec.git /chatsec
+RUN pip install -r /chatsec/resources/requirements.txt
+RUN cp /chatsec/resources/chatsec_httpd.conf /etc/apache2/sites-available/chatsec.conf
+CMD /usr/sbin/apache2ctl -D FOREGROUND

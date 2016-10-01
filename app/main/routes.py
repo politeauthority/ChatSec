@@ -38,6 +38,9 @@ def auth():
     session['room_key'] = request.cookies['room_key']
     return redirect(url_for('.chat'))
 
+@main.route('/verify')
+def verify():
+    return render_template('verify.html')
 
 @main.route('/logout')
 def logout():

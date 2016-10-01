@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block title%}ChatSec{%endblock%}
+{% block content %}   
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">
+                    <i class="fa fa-lock"></i> <span class="light">Chat</span>Sec
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a id="login_nav" class="page-scroll" href="#login">Login</a>
+                    </li>                    
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#download">Download</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+
+    <!-- Login Section -->
+    <section id="login" class="container content-section text-center">
+		<h2>Verify Other ChatSec</h2>
+        <p>Using a version of ChatSec on another host? Want to verify that the server you are using is not running a legitimate version of the software and recording your conversation? Well if the server is publically available enter it's url here and we will grade the quality and validity of the install! Some day soon we will create a test to verify local installs..</p>
+
+    	<div class="item active">
+			<div id="form_user_name" class="form-group">
+				<h4><label for="user_name">ChatSec URL</label></h4>
+				<input type="text" class="cs_login form-control form-control-lg" name="user_name" id="user_name" aria-describedby="user_name_help" value="" placeholder="http://chatsec.org/">
+				<small id="user_name_help" class="form-text text-muted"><b>DISCLOURE</b>: We <b>DO</b> record BAD and MALICIOUS ChatSec installs. Installs which pass checks are not recorded.</small>
+			</div>
+          </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>Copyright &copy; The Public 2016</p>
+        </div>
+    </footer>
+
+{% endblock %}
+
+{% block script %}
+    <script src="/static/js/aes.js"></script>
+    <script src="/static/js/aes-ctr.js"></script>
+    <script src="/static/js/main.js"></script>
+
+
+{% endblock %}    

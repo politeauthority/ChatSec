@@ -20,4 +20,4 @@ RUN git clone https://github.com/politeauthority/ChatSec.git /chatsec
 RUN pip install -r /chatsec/resources/requirements.txt
 RUN cd /chatsec/
 
-CMD gunicorn --debug --worker-class eventlet --chdir /chatsec/ chat:app
+CMD python /chatsec/chat.py

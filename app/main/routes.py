@@ -2,6 +2,7 @@ from flask import session, redirect, url_for, render_template, request
 from datetime import datetime
 import hashlib
 import avatars
+import verify as csverify
 from . import main
 
 
@@ -38,9 +39,15 @@ def auth():
     session['room_key'] = request.cookies['room_key']
     return redirect(url_for('.chat'))
 
-@main.route('/verify')
+
+@main.route('/verify', methods=['GET', 'POST'])
 def verify():
+    if 'chatsec_url' in request.form and request.form['chatsec_url'] not in ['', None]:
+        chatsec_verify = csverify.run(request.form['chatsec_url'])
+        return str(chatsec_verify)
+        return render_template('verify_results.html')
     return render_template('verify.html')
+
 
 @main.route('/logout')
 def logout():
@@ -64,3 +71,4 @@ def gen_user_key(user_name):
     return hashlib.md5(user_key).hexdigest()
 
 # End File: app/main/routes.py
+

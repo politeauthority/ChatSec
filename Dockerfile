@@ -3,7 +3,6 @@ FROM python:2.7-slim
 MAINTAINER Booj Data "alix@politeauthority.com"
 
 EXPOSE 8000
-ENV GUNICORN_HOST
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

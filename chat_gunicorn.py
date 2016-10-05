@@ -1,4 +1,6 @@
 #!/bin/env python
+"""
+"""
 from app import create_app, socketio
 from flask_debugtoolbar import DebugToolbarExtension
 app = create_app()

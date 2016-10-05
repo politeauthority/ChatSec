@@ -21,4 +21,4 @@ RUN git fetch origin
 RUN git checkout gunicorn
 RUN pip install -r /chatsec/resources/requirements.txt
 
-CMD tail -f /dev/null
+CMD gunicorn -k gevent -w 1 chat_gunicorn:app

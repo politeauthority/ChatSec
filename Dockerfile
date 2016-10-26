@@ -17,8 +17,6 @@ RUN apt-get update && \
 ADD ./ /chatsec
 
 WORKDIR /chatsec
-RUN git fetch origin
-RUN git checkout gunicorn
 RUN pip install -r /chatsec/resources/requirements.txt
 
-CMD gunicorn -k gevent -w 1 chat_gunicorn:app
+CMD tail -f /dev/null

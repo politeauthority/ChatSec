@@ -1,6 +1,8 @@
+docker stop chatsecg
+docker rm chatsecg
 docker run \
-    --name chatsec \
+    --name chatsecg \
     -d \
-    -p '8081:8000' \
+    -p '8000:8000' \
     -e VIRTUAL_HOST=chatsec.org \
-    chatsec
+    chatsecg

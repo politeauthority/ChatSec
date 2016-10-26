@@ -111,7 +111,7 @@
                 <button class="btn btn-danger setting-update" name="clear_local">Clear local</button>
                 <br>
             </div>
-            {%if config['DEBUG'] == 'x' %}
+            {%if config['DEBUG']%}
                 <div>
                     <h4>DEBUG</h4>
                     username: {{user_name}} <br>
@@ -132,7 +132,12 @@
 {% block script %}
     <script src="/static/js/aes.js"></script>
     <script src="/static/js/aes-ctr.js"></script>
-    <script src="/static/js/main.js"></script>
+
+    {%if config['DEBUG']%}
+        <script src="/static/js/main.js"></script>
+    {%else%}
+        <script src="/static/js/main.min.js"></script>
+    {%endif%}
 
     <script type="text/javascript">
         settings_update();

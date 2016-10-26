@@ -19,4 +19,4 @@ ADD ./ /chatsec
 WORKDIR /chatsec
 RUN pip install -r /chatsec/resources/requirements.txt
 
-CMD tail -f /dev/null
+CMD gunicorn -k gevent -w 1 -b 0.0.0.0:8000  --access-logfile -  chat:app

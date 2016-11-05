@@ -2,7 +2,7 @@ FROM debian:jessie
 
 MAINTAINER Booj Data "alix@politeauthority.com"
 
-EXPOSE 8000
+EXPOSE 5000
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -16,8 +16,9 @@ RUN apt-get update && \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN git clone https://github.com/politeauthority/ChatSec.git /chatsec
+ADD ./ /chatsec
 RUN pip install -r /chatsec/resources/requirements.txt
 RUN cd /chatsec/
+
 
 CMD python /chatsec/chat.py

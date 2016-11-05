@@ -9,7 +9,19 @@ If you have docker already installed, or don't, this will probably be the easies
 For more info on docker, go here <https://www.docker.com/>
 ```
 docker build -t chat-sec .
-./run_chatsec.sh
+```
+This will build the image on your server. 
+
+Chatsec.org makes use jwilder's nginx-proxy <https://github.com/jwilder/nginx-proxy>. This makes attaching a domain name to the chatsec.org server very easy, and set by only the ENV var VIRTUAL_HOST.
+
+```
+docker run \
+    --name chatsec \
+    -d \
+    -p '8081:5000' \
+    -e VIRTUAL_HOST=example.org \
+    chatsec
+
 ```
 
 ## Environment Variables at play

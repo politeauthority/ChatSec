@@ -251,7 +251,7 @@ var CHATSEC = CHATSEC || (function(){
                         timeoutTime = 0;
                         // set_login_creds($(this));
                     }
-                });                 
+                });
 
                 // Sockets
                 socket = io.connect(window.location.protocol + '//' + document.domain + ':' + location.port + '/chat');
@@ -263,7 +263,6 @@ var CHATSEC = CHATSEC || (function(){
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
-                
 
                 // Reciving user currently typing 
                 socket.on('typing', function(data) {

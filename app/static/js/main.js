@@ -185,7 +185,7 @@ function lock_console(){
 }
 
 function unlock_console(password){
-    Cookies.set('password', password);
+    Cookies.set('password', CryptoJS.MD5(password));
     Cookies.set('terminal', 'open');
     build_local_data(Cookies.get('room_key'));
     $('#lock_status').removeClass('fa-lock').addClass('fa-unlock-alt');    

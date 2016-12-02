@@ -42,12 +42,12 @@ def msg(message):
 @socketio.on('typing', namespace='/chat')
 def typing(message):
     """Sent by a client when the user is typing."""
-    room = session.get('room')
+    room_key = session.get('room_key')
     data = {
         'user_name': session.get('user_name'),
         'avatar': session.get('avatar')
     }
-    emit('typing', data, room=room)
+    emit('typing', data, room=room_key)
 
 
 @socketio.on('left', namespace='/chat')

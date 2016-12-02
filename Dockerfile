@@ -6,20 +6,19 @@ EXPOSE 5000
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        wget \
-        git \
+        apt-utils \
         gcc \
-        libpq-dev \
+        git \
         python \
         python-dev \
-        python-mysqldb \
         python-pip \
-            && \
+        gunicorn \
+        && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN mkdir /app
-RUN git clone https://github.com/politeauthority/ChatSec.git app/
+ADD ./ /chatsec
+RUN pip install -r /chatsec/resources/requirements.txt
+RUN cd /chatsec/
 
-RUN pip install -r /app/requirements.txt
 
-CMD python /app/chat.py
+CMD python /chatsec/chat.py

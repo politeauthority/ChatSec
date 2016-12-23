@@ -132,13 +132,7 @@
 {% block script %}
     <script src="/static/js/aes.js"></script>
     <script src="/static/js/aes-ctr.js"></script>
-
-    {%if config['DEBUG']%}
-        <script src="/static/js/main.js"></script>
-    {%else%}
-        <script src="/static/js/main.min.js"></script>
-    {%endif%}
-
+    <script src="/static/js/main.js"></script>
     <script type="text/javascript">
         settings_update();
         CHATSEC.init();

@@ -6,10 +6,16 @@ from datetime import datetime
 
 @socketio.on('joined', namespace='/chat')
 def joined(message):
-    """Sent by clients when they enter a room.
-    A status message is broadcast to all people in the room."""
+    """
+    Sent by clients when they enter a room.
+    A status message is broadcast to all people in the room.
+
+    """
     room_key = session.get('room_key')
     join_room(room_key)
+    print('\n\n\n\n')
+    print(message)
+    print('\n\n\n\n')
     data = {
         'msg': '@%s joined the room.' % session.get('user_name'),
         'user_name': session.get('user_name'),
@@ -24,8 +30,14 @@ def joined(message):
 
 @socketio.on('text', namespace='/chat')
 def msg(message):
-    """Sent by a client when the user entered a new message.
-    The message is sent to all people in the room."""
+    """
+    Route for messages sent by a client.
+
+    """
+    print('\n\n\n\n')
+    print(message)
+    print('\n\n\n\n')
+
     room_key = session.get('room_key')
     data = {
         'msg': message['msg'],
@@ -41,7 +53,10 @@ def msg(message):
 
 @socketio.on('typing', namespace='/chat')
 def typing(message):
-    """Sent by a client when the user is typing."""
+    """
+    Sent by a client when the user is typing.
+
+    """
     room_key = session.get('room_key')
     data = {
         'user_name': session.get('user_name'),
@@ -52,8 +67,11 @@ def typing(message):
 
 @socketio.on('left', namespace='/chat')
 def left(message):
-    """Sent by clients when they leave a room.
-    A status message is broadcast to all people in the room."""
+    """
+    Sent by clients when they leave a room.
+    A status message is broadcast to all people in the room.
+
+    """
     room_key = session.get('room_key')
     leave_room(room_key)
     msg_info = {

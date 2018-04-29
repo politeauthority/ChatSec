@@ -1,24 +1,15 @@
-FROM debian:jessie
+FROM frolvlad/alpine-python3
 
-MAINTAINER Booj Data "alix@politeauthority.com"
+ADD ./ /opt/chatsec/
 
-EXPOSE 5000
+RUN apk add --no-cache \
+    bash \
+    python3 \
+    python-dev \
+    py-pip \
+    gcc \
+    && rm -rf /var/cache/apk/*
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        apt-utils \
-        gcc \
-        git \
-        python \
-        python-dev \
-        python-pip \
-        gunicorn \
-        && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
-ADD ./ /chatsec
-RUN pip install -r /chatsec/resources/requirements.txt
-RUN cd /chatsec/
-
-
-CMD python /chatsec/chat.py
+WORKDIR /opt/chatsec/
+RUN pip3 install -r ./requirements.txt
+CMD python chat.py

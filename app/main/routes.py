@@ -1,8 +1,9 @@
-from flask import session, redirect, url_for, render_template, request
+from flask import Blueprint, session, redirect, url_for, render_template, request
 from datetime import datetime
 import hashlib
-import avatars
-from . import main
+from app.main import avatars
+
+main = Blueprint('Main', __name__, url_prefix='/')
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -10,11 +11,12 @@ def index():
     return render_template('index.html')
 
 
-@main.route('/chat')
+@main.route('chat')
 def chat():
     """
     Chat room. The user's name and room must be stored in
     the session.
+
     """
     if 'avatar' not in session:
         session['avatar'] = avatars.get_avatar()
@@ -29,7 +31,7 @@ def chat():
     return render_template('chat.html', **data)
 
 
-@main.route('/auth')
+@main.route('auth', methods=['GET', 'POST'])
 def auth():
     if 'user_name' not in request.cookies or 'room_key' not in request.cookies:
         return error('Required cookies not set.')
@@ -39,7 +41,7 @@ def auth():
     return redirect(url_for('.chat'))
 
 
-@main.route('/logout')
+@main.route('logout')
 def logout():
     if 'user_name' in session:
         session.pop('user_name')
@@ -58,6 +60,6 @@ def error(msg):
 
 def gen_user_key(user_name):
     user_key = user_name + str(datetime.now())
-    return hashlib.md5(user_key).hexdigest()
+    return hashlib.md5(user_key.encode('utf-8')).hexdigest()
 
 # End File: app/main/routes.py

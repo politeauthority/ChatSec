@@ -11,8 +11,9 @@ function send_msg(msg){
     if(msg != ''){
         $('#text').val('');
         msg = Aes.Ctr.encrypt(msg, Cookies.get('password'), 256)
-        socket.emit('text', {'msg': msg});
-    }    
+        console.log(socket.emit('text', {'msg': msg}));
+    }
+    console.log(msg);
 }
 
 function filter_msg(msg){
@@ -55,11 +56,11 @@ function spawn_notification(msg_obj) {
                 title ='Chatsec';
                 msg = 'New message recieved.';
             }
-            var n = new Notification('Title', { 
+            var n = new Notification('Title', {
                 body: msg,
                 icon: 'static/imgs/avatars/black/' + msg_obj.avatar
             });
-            setTimeout(n.close.bind(n), 5000);               
+            setTimeout(n.close.bind(n), 5000);
         });
     }
 }
@@ -90,14 +91,14 @@ function build_local_data(room_key){
 }
 
 function draw_msg(msg_obj){
-    unencrypted_msg = Aes.Ctr.decrypt(msg_obj.msg, Cookies.get('password'), 256);    
+    unencrypted_msg = Aes.Ctr.decrypt(msg_obj.msg, Cookies.get('password'), 256);
     filtered_msg = filter_msg( unencrypted_msg );
     $(msg_obj.tpl).insertBefore('#chat li:last');
     new_msg_li = $('#chat li:nth-last-child(2)');
     new_msg_li.find('.msg_content').html(filtered_msg);
     new_msg_user = new_msg_li.attr('data-user');
 
-    
+
     msg_pretty_time = pretty_time_now(msg_obj.sent)
     new_msg_li.find('.msg_date').text(msg_pretty_time);
     if(Cookies.get('user_name')==new_msg_user){
@@ -112,7 +113,7 @@ function draw_msg(msg_obj){
     previous_message_li = $('#chat li:nth-last-child(3)');
     previous_message_type = previous_message_li.attr('data-type');
     append_to_last = false;
-    if( 
+    if(
          previous_message_li.attr('data-user') == new_msg_user
         &&
         previous_message_type == 'msg')
@@ -179,7 +180,7 @@ function lock_console(){
         if(! $(this).hasClass('typing')){
             $(this).remove();
         }
-    });    
+    });
     Cookies.set('password', '');
     Cookies.set('terminal', 'locked');
 }
@@ -188,12 +189,12 @@ function unlock_console(password){
     Cookies.set('password', CryptoJS.MD5(password));
     Cookies.set('terminal', 'open');
     build_local_data(Cookies.get('room_key'));
-    $('#lock_status').removeClass('fa-lock').addClass('fa-unlock-alt');    
+    $('#lock_status').removeClass('fa-lock').addClass('fa-unlock-alt');
     $('#repassword_container').fadeOut(1500);
     $('#settings_btn').fadeIn();
     $('#chat_window').fadeIn();
     $("#textbox").focus();
-    $('#chat').scrollTop($('#chat')[0].scrollHeight);    
+    $('#chat').scrollTop($('#chat')[0].scrollHeight);
 }
 
 function timerIncrement() {
@@ -214,7 +215,7 @@ var CHATSEC = CHATSEC || (function(){
 
             $('#room_name').html(':: ' + Cookies.set('room_name'));
             $('title').html('Chatsec::  ' + Cookies.set('room_name'));
-            
+
             window.Notification.requestPermission().then(function(result) {
                 Cookies.set('notifications', true);
                 console.log(result);
@@ -227,11 +228,11 @@ var CHATSEC = CHATSEC || (function(){
             }
 
             $(document).ready(function(){
-                build_local_data(Cookies.get('room_key'));                
-                $('.typing').hide();                
+                build_local_data(Cookies.get('room_key'));
+                $('.typing').hide();
                 $("#textbox").focus();
 
-                // Manual/Idle Lockout 
+                // Manual/Idle Lockout
                 $('#lock_btn').click(function(){
                     lock_console();
                 });
@@ -258,13 +259,13 @@ var CHATSEC = CHATSEC || (function(){
                 socket.on('connect', function() {
                     socket.emit('joined', {});
                 });
-                
+
                 socket.on('status', function(data) {
                     $(data.tpl).insertBefore('#chat li:last');
                     $('#chat').scrollTop($('#chat')[0].scrollHeight);
                 });
 
-                // Reciving user currently typing 
+                // Reciving user currently typing
                 socket.on('typing', function(data) {
                     if(Cookies.get('user_name') != data.user_name ){
                         $('.typing').find('.typing_avatar').attr(
@@ -309,7 +310,7 @@ var CHATSEC = CHATSEC || (function(){
                 $(window).on('beforeunload', function(){
                     socket.emit('left', {}, function() {
                         socket.disconnect();
-                    });                
+                    });
                 });
 
                 // Timer Scripts

@@ -1,4 +1,4 @@
-eventlet==0.17.4
+eventlet==0.31.0
 Flask==0.10.1
 Flask-SocketIO
 Flask-WTF==0.9.5
